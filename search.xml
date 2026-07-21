@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World</title>
-    <url>/2026/07/21/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
     <title>堆上的IO，largbin高版本的利用</title>
     <url>/2026/05/24/abab/</url>
     <content><![CDATA[<h1 id="堆上的IO，largbin高版本的利用"><a href="#堆上的IO，largbin高版本的利用" class="headerlink" title="堆上的IO，largbin高版本的利用"></a>堆上的IO，largbin高版本的利用</h1><p><img src="/./assets/image-20260524195338-loa2jsp.png" alt="image"><br><a href="read://https_xz.aliyun.com/?url=https%3A%2F%2Fxz.aliyun.com%2Fnews%2F15081">浅析Large_bins_attack在高低版本的利用</a><br><a href="https://www.cnblogs.com/damoxilai/p/16380750.html">large bin attack - DAMOXILAI - 博客园</a></p>
@@ -61,6 +43,24 @@
 <p>_IO_wfile_overflow(FILE *f, wint_t wch)<br>{<br>&#x2F;&#x2F; —- 检查1: _IO_NO_WRITES 标志 —-<br>if (f-&gt;_flags &amp; _IO_NO_WRITES)  &#x2F;&#x2F; _IO_NO_WRITES &#x3D; 0x0008<br>{<br>f-&gt;_flags |&#x3D; _IO_ERR_SEEN;<br>__set_errno(EBADF);<br>return WEOF;                &#x2F;&#x2F; ← 如果flags有0x8就死在这<br>}<br>&#x2F;&#x2F; 我们的 flags &#x3D; 0, 不触发 ?</p>
 <p>&#x2F;&#x2F; —- 检查2: 当前不在”正在写”状态 —-<br>if ((f-&gt;_flags &amp; _IO_CURRENTLY_PUTTING) &#x3D;&#x3D; 0)  &#x2F;&#x2F; 0x0800<br>{<br>&#x2F;&#x2F; 宽字符写缓冲区还没分配?<br>if (f-&gt;_wide_data-&gt;_IO_write_base &#x3D;&#x3D; 0)     &#x2F;&#x2F; ← 需要为0!<br>{<br>&#x2F;&#x2F; —- 分配宽字符缓冲区 —-<br>_IO_wdoallocbuf(f);                     &#x2F;&#x2F; ← 攻击触发点!<br>&#x2F;&#x2F; …<br>}<br>}<br>&#x2F;&#x2F; 我们的 setup:<br>&#x2F;&#x2F;   _flags &#x3D; 0                          → 不触发 _IO_NO_WRITES<br>&#x2F;&#x2F;   _flags &amp; 0x800 &#x3D; 0                  → 走if分支<br>&#x2F;&#x2F;   _wide_data → chunk+0x100            → _IO_write_base &#x3D; 0 ?<br>}<br>这里的话只要flag的头里面没有0x8即可过检查，这里需要注意wide_data所指向的_IO_write_base和我们伪造的write_base不一定时一样的，因为这个是时根据wide_data的指针内容和对应的偏移来跳转的<br>wide_data的具体结构：<br>struct _IO_wide_data           &#x2F;&#x2F; 宽字符数据结构体<br>{<br>wchar_t *_IO_read_ptr;     &#x2F;&#x2F; 0x00<br>wchar_t *_IO_read_end;     &#x2F;&#x2F; 0x08<br>wchar_t *_IO_read_base;    &#x2F;&#x2F; 0x10<br>wchar_t *_IO_write_base;   &#x2F;&#x2F; 0x18: ← _IO_wfile_overflow检查这里是否为0<br>wchar_t *_IO_write_ptr;    &#x2F;&#x2F; 0x20<br>wchar_t *_IO_write_end;    &#x2F;&#x2F; 0x28<br>wchar_t *_IO_buf_base;     &#x2F;&#x2F; 0x30<br>wchar_t *_IO_buf_end;      &#x2F;&#x2F; 0x38<br>wchar_t *_IO_save_base;    &#x2F;&#x2F; 0x40<br>wchar_t *_IO_backup_base;  &#x2F;&#x2F; 0x48<br>wchar_t *_IO_save_end;     &#x2F;&#x2F; 0x50<br>__mbstate_t _IO_state;     &#x2F;&#x2F; 0x58<br>__mbstate_t _IO_last_state;&#x2F;&#x2F; 0x60<br>struct _IO_codecvt _codecvt;&#x2F;&#x2F; 0x68<br>wchar_t _shortbuf[1];      &#x2F;&#x2F; 0xc8<br>&#x2F;&#x2F; …<br>const struct _IO_jump_t *_wide_vtable; &#x2F;&#x2F; 0xe0: ← 假跳板目标!<br>&#x2F;&#x2F;                                        __doallocate替换为system<br>};<br>这里的话也就是wide指针的0x18的地方为0即可，之后就进入到了 _IO_wdoallocbuf(f)<br>进去之后呢，就是调用了fp-&gt;_wide_data-&gt;_wide_vtable-&gt;__doallocate<br>这里可以看到wide_vtable对于wide_data的 偏移是0xe0，doallcate在vtable偏移0x68处，这个位置放上system即可<br>_wide_vtable:<br>const struct _IO_jump_t _IO_wfile_jumps <strong>attribute</strong>((section(“__libc_IO_vtables”))) &#x3D;<br>{<br>0,                       &#x2F;&#x2F; 0x00 __dummy<br>0,                       &#x2F;&#x2F; 0x08 __dummy2<br>_IO_file_finish,         &#x2F;&#x2F; 0x10 __finish<br>_IO_wfile_overflow,      &#x2F;&#x2F; 0x18 __overflow    ← _IO_OVERFLOW调这里<br>_IO_wfile_underflow,     &#x2F;&#x2F; 0x20 __underflow<br>_IO_wfile_underflow,     &#x2F;&#x2F; 0x28 __uflow<br>_IO_wdefault_pbackfail,  &#x2F;&#x2F; 0x30 __pbackfail<br>_IO_wdefault_xsputn,     &#x2F;&#x2F; 0x38 __xsputn<br>_IO_wdefault_xsgetn,     &#x2F;&#x2F; 0x40 __xsgetn<br>_IO_wfile_seekoff,       &#x2F;&#x2F; 0x48 __seekoff<br>_IO_default_seekpos,     &#x2F;&#x2F; 0x50 __seekpos<br>_IO_default_setbuf,      &#x2F;&#x2F; 0x58 __setbuf<br>_IO_wfile_sync,          &#x2F;&#x2F; 0x60 __sync<br>_IO_wfile_doallocate,    &#x2F;&#x2F; 0x68 __doallocate  ← 正常路径<br>_IO_file_read,           &#x2F;&#x2F; 0x70 __read<br>_IO_file_write,          &#x2F;&#x2F; 0x78 __write<br>_IO_file_seek,           &#x2F;&#x2F; 0x80 __seek<br>_IO_file_close,          &#x2F;&#x2F; 0x88 __close<br>_IO_file_stat,           &#x2F;&#x2F; 0x90 __stat<br>_IO_wfile_showmanyc,     &#x2F;&#x2F; 0x98 __showmanyc<br>_IO_wfile_imbue,         &#x2F;&#x2F; 0xa0 __imbue<br>};<br>这里可以看到doallcate在wide_vtable里面的偏移是0x68，就是执行对应位置的system了，system（sh）</p>
 <p>‍</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2026/07/21/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
   </entry>
 </search>
