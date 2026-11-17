@@ -1,0 +1,8 @@
+menu:
+  首页: /
+  归档: /archives
+
+# 当前未安装 RSS 生成器，也没有站点图标。
+rss:
+favicon:
+excerpt_link: 阅读全文
