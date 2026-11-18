@@ -33,7 +33,10 @@
   if (!pet) return;
 
   const button = pet.querySelector(".home-pet-button");
-  const closedEyes = pet.querySelector(".home-pet-blink");
+  const face = button.querySelector("img");
+  const openEyes = face.src;
+  const closedEyes = new Image();
+  closedEyes.src = face.dataset.blinkSrc;
   const message = pet.querySelector(".home-pet-message");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const motions = [
@@ -43,7 +46,7 @@
   ];
   let nextMotion = 0;
   let animation;
-  let blink;
+  let reopen;
   let dismissal;
 
   button.addEventListener("click", () => {
@@ -52,16 +55,15 @@
     dismissal = setTimeout(() => { message.textContent = ""; }, 2600);
 
     animation?.cancel();
-    blink?.cancel();
-    if (reducedMotion.matches) return;
+    clearTimeout(reopen);
+    if (reducedMotion.matches) {
+      face.src = openEyes;
+      return;
+    }
 
     if (closedEyes.complete && closedEyes.naturalWidth) {
-      blink = closedEyes.animate([
-        { opacity: 0 },
-        { opacity: 1, offset: 0.22 },
-        { opacity: 1, offset: 0.73 },
-        { opacity: 0 },
-      ], 220);
+      face.src = closedEyes.src;
+      reopen = setTimeout(() => { face.src = openEyes; }, 180);
     }
 
     const transforms = ["none", ...motions[nextMotion], "none"];
