@@ -1,6 +1,7 @@
 "use strict";
 
 const { escapeHTML } = require("hexo-util");
+const { validateProfileSettings } = require("../integrations/profile-settings");
 
 // Run after Fluid's lazy-loading filter so these small images load immediately.
 hexo.extend.filter.register("after_render:html", function (html, locals) {
@@ -10,11 +11,12 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
   const href = (url) => escapeHTML(urlFor(url));
   const name = escapeHTML(this.config.author || this.config.title);
   const intro = escapeHTML(this.config.description || "");
+  const settings = validateProfileSettings(locals.site.data["home-profile"]);
   const links = [
-    ["文章目录", "/#article-directory"],
-    ["归档", `/${this.config.archive_dir}/`],
-    ["标签", `/${this.config.tag_dir}/`],
-  ];
+    ["directory", "文章目录", "/#article-directory"],
+    ["archive", "归档", `/${this.config.archive_dir}/`],
+    ["tags", "标签", `/${this.config.tag_dir}/`],
+  ].filter(([id]) => settings.links.includes(id));
   const profile = `<aside id="home-profile" class="home-profile" aria-label="个人资料">
     <details open>
       <summary class="home-profile-toggle">个人资料</summary>
@@ -24,9 +26,9 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
           <h2>${name}</h2>
           ${intro ? `<p>${intro}</p>` : ""}
         </div>
-        <nav class="home-profile-links" aria-label="博客导航">
-          ${links.map(([label, url]) => `<a href="${href(url)}">${label}</a>`).join("")}
-        </nav>
+        ${links.length ? `<nav class="home-profile-links" aria-label="博客导航">
+          ${links.map(([, label, url]) => `<a href="${href(url)}">${label}</a>`).join("")}
+        </nav>` : ""}
       </div>
     </details>
   </aside>`;
@@ -41,6 +43,6 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
 
   const board = /<div id="board"([^>]*)>/;
   if (!board.test(html)) return html;
-  return html.replace(board, (_, attrs) => `<div id="board" class="home-with-profile"${attrs}>${profile}`)
+  return html.replace(board, (_, attrs) => `<div id="board" class="home-with-profile" data-profile-side="${settings.side}"${attrs}>${profile}`)
     .replace("</body>", () => `${pet}\n</body>`);
 }, 20);
