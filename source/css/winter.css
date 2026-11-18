@@ -110,8 +110,8 @@
 
 #board.home-with-profile {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(12.5rem, 15rem);
-  grid-template-areas: "posts profile";
+  grid-template-columns: minmax(12.5rem, 15rem) minmax(0, 1fr);
+  grid-template-areas: "profile posts";
   gap: 1rem;
 }
 
@@ -126,7 +126,7 @@
   scroll-margin-top: 5rem;
   position: sticky;
   top: 5rem;
-  margin-inline-end: 1.35rem;
+  margin-inline-start: 1.35rem;
   color: var(--text-color);
 }
 
@@ -231,6 +231,7 @@
 }
 
 .home-pet-button {
+  position: relative;
   display: block;
   padding: 0;
   border: none;
@@ -244,6 +245,13 @@
   width: clamp(4.2rem, 7vw, 6.25rem);
   height: auto;
   filter: drop-shadow(0 4px 5px rgb(26 38 51 / 28%));
+}
+
+.home-pet-button .home-pet-blink {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  filter: none;
 }
 
 .home-pet-message {
@@ -340,21 +348,21 @@
 
   .home-profile {
     position: fixed;
-    inset: 5rem 0 auto auto;
+    inset: 5rem auto auto 0;
     z-index: 4;
     margin: 0;
   }
 
   .home-profile > details {
-    border-inline-end: 0;
-    border-radius: 0.6rem 0 0 0.6rem;
+    border-inline-start: 0;
+    border-radius: 0 0.6rem 0.6rem 0;
     background: var(--board-bg-color);
     box-shadow: 0 3px 12px rgb(24 43 65 / 12%);
   }
 
   .home-profile-content {
     position: absolute;
-    inset: calc(100% + 0.45rem) 0.65rem auto auto;
+    inset: calc(100% + 0.45rem) auto auto 0.65rem;
     width: min(14rem, calc(100vw - 1.3rem));
     max-height: calc(100dvh - 8.5rem);
     overflow-y: auto;
