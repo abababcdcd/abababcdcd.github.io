@@ -1,10 +1,39 @@
-#banner {
-  background-color: #42617e !important;
-  background-position: center 54% !important;
+body {
+  isolation: isolate;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(13 29 46 / 38%), rgb(13 29 46 / 8%) 45%, rgb(13 29 46 / 52%)),
+    #42617e url("../img/winter-cover.jpg") center / cover no-repeat;
+}
+
+body:has(#board-ctn .post-content)::before {
+  inset: -1.75rem;
+  filter: blur(14px);
+}
+
+/* The cover is a single viewport layer, shared by the banner and page. */
+#banner,
 #banner .mask {
-  background-image: linear-gradient(180deg, rgb(24 43 65 / 36%), transparent 34%, rgb(24 43 65 / 10%));
+  background: transparent !important;
+}
+
+#board {
+  background-color: color-mix(in srgb, var(--board-bg-color) 94%, transparent);
+  box-shadow: 0 14px 45px rgb(12 28 45 / 24%);
+}
+
+body > footer,
+body > footer .footer-inner,
+body > footer a {
+  color: #f5f8fe;
+  text-shadow: 0 1px 4px rgb(10 24 41 / 70%);
 }
 
 #banner .banner-text {
@@ -227,10 +256,72 @@
   font-size: 0.84rem;
 }
 
-.home-profile-links a {
+.home-profile-links > a {
   display: inline-flex;
   padding: 0.25rem 0.05rem;
   color: var(--post-link-color);
+}
+
+.home-profile-directory {
+  flex: 0 0 100%;
+  min-width: 0;
+  border: 1px solid var(--line-color);
+  border-radius: 0.5rem;
+  background: var(--board-bg-color);
+  text-align: start;
+}
+
+.home-profile-directory > summary {
+  padding: 0.45rem 0.65rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.home-profile-directory-list {
+  max-height: min(14rem, 36dvh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  border-top: 1px solid var(--line-color);
+  padding: 0.35rem 0.6rem 0.45rem;
+}
+
+.home-profile-directory-list .article-directory-groups {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.35rem;
+}
+
+.home-profile-directory-list summary {
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--sec-text-color);
+}
+
+.home-profile-directory-list .article-directory-count {
+  font-size: 0.72rem;
+}
+
+.home-profile-directory-list ul {
+  margin: 0.15rem 0 0;
+  padding-inline-start: 1.1rem;
+  overflow-wrap: anywhere;
+}
+
+.home-profile-directory-list a {
+  display: block;
+  padding-block: 0.22rem;
+  color: var(--post-link-color);
+}
+
+.home-profile-directory-list a:is(:hover, :focus-visible) {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+.home-profile-directory-list p {
+  margin: 0;
+  color: var(--sec-text-color);
 }
 
 .home-pet {
@@ -396,6 +487,11 @@
     inset: calc(100% + 0.45rem) 0.65rem auto auto;
   }
 
+  .home-profile-directory-list {
+    max-height: none;
+    overflow: visible;
+  }
+
   .side-col:has(> .reading-toc) {
     display: contents !important;
   }
@@ -424,8 +520,8 @@
 }
 
 @media (max-width: 767px) {
-  #banner {
-    background-position: 88% center !important;
+  body::before {
+    background-position: center, 70% center;
   }
 }
 

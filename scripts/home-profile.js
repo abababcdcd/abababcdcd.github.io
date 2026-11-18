@@ -13,10 +13,14 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
   const intro = escapeHTML(this.config.description || "");
   const settings = validateProfileSettings(locals.site.data["home-profile"]);
   const links = [
-    ["directory", "文章目录", "/#article-directory"],
     ["archive", "归档", `/${this.config.archive_dir}/`],
     ["tags", "标签", `/${this.config.tag_dir}/`],
   ].filter(([id]) => settings.links.includes(id));
+  const renderGroups = this.extend.helper.get("render_directory_groups");
+  const directory = settings.links.includes("directory") ? `<details class="home-profile-directory" open>
+    <summary>文章目录</summary>
+    <div class="home-profile-directory-list">${renderGroups(locals.site, false, urlFor, true)}</div>
+  </details>` : "";
   const profile = `<aside id="home-profile" class="home-profile" aria-label="个人资料">
     <details open>
       <summary class="home-profile-toggle">个人资料</summary>
@@ -26,7 +30,8 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
           <h2>${name}</h2>
           ${intro ? `<p>${intro}</p>` : ""}
         </div>
-        ${links.length ? `<nav class="home-profile-links" aria-label="博客导航">
+        ${directory || links.length ? `<nav class="home-profile-links" aria-label="博客导航">
+          ${directory}
           ${links.map(([, label, url]) => `<a href="${href(url)}">${label}</a>`).join("")}
         </nav>` : ""}
       </div>

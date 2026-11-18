@@ -42,15 +42,12 @@ function directoryGroups(site, byTag) {
   return [...groups.values()].sort((a, b) => nameOrder.compare(a.name, b.name));
 }
 
-function renderDirectory(site, byTag, config, urlFor) {
+function renderDirectoryGroups(site, byTag, urlFor, openGroups = false) {
   const groups = directoryGroups(site, byTag);
-  const title = byTag ? "标签目录" : "文章目录";
-  const pages = byTag
-    ? [["按分类浏览", "/#article-directory"]]
-    : [["全部分类", `${config.category_dir}/`], ["全部标签", `${config.tag_dir}/`]];
-  const links = pages.map(([label, link]) => `<a href="${escapeHTML(urlFor(link))}">${label}</a>`).join("");
+  if (!groups.length) return `<p>${byTag ? "还没有带标签的文章。" : "还没有文章。"}</p>`;
+
   const items = groups.map(({ name, posts }) => {
-    const open = groups.length === 1 && posts.length <= 6 ? " open" : "";
+    const open = openGroups || (groups.length === 1 && posts.length <= 6) ? " open" : "";
     const entries = posts.map((post) => {
       const href = escapeHTML(urlFor(post.path));
       return `<li><a href="${href}">${escapeHTML(post.title)}</a></li>`;
@@ -60,11 +57,21 @@ function renderDirectory(site, byTag, config, urlFor) {
       <ul>${entries}</ul>
     </details>`;
   }).join("");
-  const emptyMessage = byTag ? "还没有带标签的文章。" : "还没有文章。";
+  return `<div class="article-directory-groups">${items}</div>`;
+}
+
+hexo.extend.helper.register("render_directory_groups", renderDirectoryGroups);
+
+function renderDirectory(site, byTag, config, urlFor) {
+  const title = byTag ? "标签目录" : "文章目录";
+  const pages = byTag
+    ? [["按分类浏览", "/#article-directory"]]
+    : [["全部分类", `${config.category_dir}/`], ["全部标签", `${config.tag_dir}/`]];
+  const links = pages.map(([label, link]) => `<a href="${escapeHTML(urlFor(link))}">${label}</a>`).join("");
 
   return `<nav id="article-directory" class="article-directory${byTag ? " article-directory-tags" : ""}" aria-labelledby="article-directory-title">
     <div class="article-directory-heading"><h2 id="article-directory-title">${title}</h2><div class="article-directory-links">${links}</div></div>
-    ${items ? `<div class="article-directory-groups">${items}</div>` : `<p>${emptyMessage}</p>`}
+    ${renderDirectoryGroups(site, byTag, urlFor)}
   </nav>`;
 }
 
