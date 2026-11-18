@@ -1,6 +1,6 @@
 "use strict";
 
-const { Plugin, showMessage } = require("siyuan");
+const { Plugin, showMessage, getActiveEditor, getAllEditor } = require("siyuan");
 const nodeRequire = typeof window !== "undefined" && window.require ? window.require : require;
 const fs = nodeRequire("node:fs");
 const path = nodeRequire("node:path");
@@ -18,6 +18,19 @@ function loadSettings() {
     if (!settings[key] || typeof settings[key] !== "string") throw new Error(`缺少配置：${key}`);
   }
   return settings;
+}
+
+function currentDocumentId() {
+  const active = typeof getActiveEditor === "function" ? getActiveEditor() : undefined;
+  if (active?.protyle?.block?.rootID) return active.protyle.block.rootID;
+  if (typeof getAllEditor !== "function") return null;
+  const editors = getAllEditor();
+  const visible = editors.filter((editor) =>
+    editor.protyle?.element &&
+    !editor.protyle.element.classList.contains("fn__none") &&
+    editor.protyle.element.closest(".layout__wnd--active")
+  );
+  return visible.length === 1 ? visible[0].protyle.block?.rootID : null;
 }
 
 async function siyuanApi(endpoint, body) {
@@ -114,15 +127,18 @@ class SiyuanHexoPublisher extends Plugin {
       title: "发布当前文档到博客",
       position: "right",
       callback: async () => {
-        if (this.publishing) return;
-        const id = this.getEditor()?.protyle?.block?.rootID;
-        if (!id) {
-          showMessage("请先打开要发布的文档");
+        if (this.publishing) {
+          showMessage("上一篇文档仍在发布，请稍候");
           return;
         }
-        this.publishing = true;
-        showMessage("正在发布到博客…");
         try {
+          const id = currentDocumentId();
+          if (!id) {
+            showMessage("请先打开并选中要发布的文档");
+            return;
+          }
+          this.publishing = true;
+          showMessage("正在发布到博客…");
           await publishDocument(id);
           showMessage("已提交到 GitHub，博客将在自动部署完成后更新");
         } catch (error) {
@@ -136,4 +152,4 @@ class SiyuanHexoPublisher extends Plugin {
   }
 }
 
-module.exports = { default: SiyuanHexoPublisher, prepareMarkdown };
+module.exports = { default: SiyuanHexoPublisher, prepareMarkdown, currentDocumentId };
