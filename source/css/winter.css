@@ -23,6 +23,91 @@
   color: #ffdaa8;
 }
 
+.article-directory {
+  scroll-margin-top: 5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line-color);
+  margin-bottom: 1.5rem;
+}
+
+.article-directory-tags {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.article-directory-tags + .tagcloud {
+  display: none;
+}
+
+.article-directory-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.article-directory-heading h2 {
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.article-directory-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.92rem;
+}
+
+.article-directory-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  align-items: start;
+  gap: 0.65rem;
+}
+
+.article-directory details {
+  background: var(--body-bg-color);
+  border: 1px solid var(--line-color);
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.article-directory summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.article-directory-count {
+  float: right;
+  margin-left: 0.5rem;
+  color: var(--sec-text-color);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.article-directory ul {
+  margin: 0.4rem 0 0.15rem;
+  padding-left: 1.2rem;
+}
+
+.article-directory li {
+  padding: 0.22rem 0;
+}
+
+.article-directory a {
+  color: var(--post-link-color);
+}
+
+.article-directory a:hover,
+.article-directory a:focus-visible {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
 @media (max-width: 767px) {
   #banner {
     background-position: 88% center !important;

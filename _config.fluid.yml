@@ -18,6 +18,7 @@ navbar:
   blog_title: ""
   menu:
     - { key: home, name: 首页, link: /, icon: "iconfont icon-home-fill" }
+    - { key: directory, name: 目录, link: '/#article-directory', icon: "iconfont icon-category-fill" }
     - { key: archive, name: 归档, link: /archives/, icon: "iconfont icon-archive-fill" }
     - { key: tag, name: 标签, link: /tags/, icon: "iconfont icon-tags-fill" }
 
@@ -59,6 +60,7 @@ archive: &winter_page_header
 
 category:
   <<: *winter_page_header
+  post_order_by: -sticky -date
 
 tag:
   <<: *winter_page_header

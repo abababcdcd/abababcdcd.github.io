@@ -80,10 +80,23 @@ function prepareMarkdown(id, exported, workspaceDir) {
     `title: ${JSON.stringify(title)}`,
     `date: ${dateFromId(id)}`,
     `siyuan_id: ${id}`,
+    "categories: []",
+    "tags: []",
+    "sticky: 0",
     "---",
     "",
   ].join("\n");
   return { markdown: frontMatter + content.trim() + "\n", assets, title };
+}
+
+function keepLocalFrontMatter(previous, updated) {
+  const headerPattern = /^\uFEFF?---[ \t]*\r?\n(?:[^\r\n]*\r?\n)*?---[ \t]*(?=\r?\n|$)/;
+  const previousHeader = previous.match(headerPattern)?.[0];
+  if (!previousHeader) {
+    throw new Error("博客文章缺少由 --- 包围的设置，请补齐后再发布");
+  }
+  const updatedHeader = updated.match(headerPattern)[0];
+  return previousHeader + updated.slice(updatedHeader.length);
 }
 
 async function git(settings, ...args) {
@@ -103,8 +116,11 @@ async function publishDocument(id) {
   const postsDir = path.join(settings.blogDir, "source", "_posts");
   const markdownPath = path.join(postsDir, `${id}.md`);
   const assetFolder = path.join(postsDir, id);
+  const markdown = fs.existsSync(markdownPath)
+    ? keepLocalFrontMatter(fs.readFileSync(markdownPath, "utf8"), prepared.markdown)
+    : prepared.markdown;
   fs.mkdirSync(postsDir, { recursive: true });
-  fs.writeFileSync(markdownPath, prepared.markdown, "utf8");
+  fs.writeFileSync(markdownPath, markdown, "utf8");
   if (prepared.assets.size) fs.mkdirSync(assetFolder, { recursive: true });
   for (const [name, data] of prepared.assets) {
     fs.writeFileSync(path.join(assetFolder, name), data);
@@ -152,4 +168,4 @@ class SiyuanHexoPublisher extends Plugin {
   }
 }
 
-module.exports = { default: SiyuanHexoPublisher, prepareMarkdown, currentDocumentId };
+module.exports = { default: SiyuanHexoPublisher, prepareMarkdown, currentDocumentId, keepLocalFrontMatter };

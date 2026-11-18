@@ -23,7 +23,7 @@ Module._load = function (request, parent, isMain) {
   };
   return originalLoad.call(this, request, parent, isMain);
 };
-const { default: Publisher, prepareMarkdown, currentDocumentId } = require("./index.js");
+const { default: Publisher, prepareMarkdown, currentDocumentId, keepLocalFrontMatter } = require("./index.js");
 Module._load = originalLoad;
 
 const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "siyuan-hexo-"));
@@ -40,6 +40,15 @@ try {
   assert.match(post.markdown, /date: 2026-11-18 09:00:00/);
   assert.match(post.markdown, /!\[图\]\(pic\.png\)/);
   assert.equal(post.assets.get("pic.png").toString(), "image bytes");
+  const localHeader = [
+    "\uFEFF---", 'title: "本地标题"', "date: 2026-11-18 09:00:00",
+    "categories:", "  - 学习笔记", "tags: [随笔, Hexo] # 本地标签", "sticky: 20", "---",
+  ].join("\r\n");
+  assert.equal(
+    keepLocalFrontMatter(localHeader + "\r\n旧正文", post.markdown),
+    localHeader + "\n![图](pic.png)\n\n正文\n"
+  );
+  assert.throws(() => keepLocalFrontMatter("---\n未闭合的设置", post.markdown), /补齐后再发布/);
   assert.throws(() => prepareMarkdown("20261118090000-abcdefg", {
     hPath: "/测试", content: "![图](assets/missing.png)",
   }, workspace), /找不到思源资源/);
