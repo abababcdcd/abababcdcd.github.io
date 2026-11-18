@@ -1,0 +1,67 @@
+dark_mode:
+  default: light
+
+color:
+  body_bg_color: "#f1f6fa"
+  navbar_bg_color: "#22384f"
+  board_color: "#fdfefe"
+  text_color: "#263a4f"
+  sec_text_color: "#50667b"
+  post_text_color: "#24364a"
+  post_heading_color: "#20354c"
+  post_link_color: "#315d85"
+  link_hover_color: "#89551d"
+  link_hover_color_dark: "#f1c58f"
+  link_hover_bg_color: "#f7efe5"
+
+navbar:
+  blog_title: ""
+  menu:
+    - { key: home, name: 首页, link: /, icon: "iconfont icon-home-fill" }
+    - { key: archive, name: 归档, link: /archives/, icon: "iconfont icon-archive-fill" }
+    - { key: tag, name: 标签, link: /tags/, icon: "iconfont icon-tags-fill" }
+
+fun_features:
+  typing:
+    enable: false
+  progressbar:
+    enable: false
+
+banner:
+  parallax: false
+  width_height_ratio: 0
+
+scroll_down_arrow:
+  banner_height_limit: 62
+
+custom_css: /css/winter.css
+
+index:
+  banner_img: /img/winter-cover.jpg
+  banner_img_height: 64
+  banner_mask_alpha: 0.10
+  slogan:
+    text: "abababcd 的小窝"
+  auto_excerpt:
+    enable: false
+
+post:
+  banner_img: /img/winter-cover.jpg
+  banner_img_height: 40
+  banner_mask_alpha: 0.32
+  copyright:
+    enable: false
+
+archive: &winter_page_header
+  banner_img: /img/winter-cover.jpg
+  banner_img_height: 42
+  banner_mask_alpha: 0.28
+
+category:
+  <<: *winter_page_header
+
+tag:
+  <<: *winter_page_header
+
+page404:
+  <<: *winter_page_header

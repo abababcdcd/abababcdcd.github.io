@@ -1,6 +1,6 @@
 # abababcd
 
-这是一个使用 Hexo 和 Landscape 主题的博客。站点语言和时区已设置为简体中文、上海时间。
+这是一个使用 Hexo 和 Fluid 主题的博客。站点使用简体中文和上海时区。
 
 ## 本地预览
 
@@ -24,7 +24,7 @@ node node_modules/hexo/bin/hexo generate
 
 仓库为 `abababcdcd/abababcdcd.github.io`。推送到 `main` 分支后，`.github/workflows/pages.yml` 会自动生成并发布站点，地址为 <https://abababcdcd.github.io>。Pages 的发布来源应设为 **GitHub Actions**。
 
-文章放在 `source/_posts/`。站点标题、作者和简介在 `_config.yml` 中修改，导航在 `_config.landscape.yml` 中修改。
+文章放在 `source/_posts/`。站点标题、作者和简介在 `_config.yml` 中修改。封面、配色和导航在 `_config.fluid.yml` 中配置，首页封面位于 `source/img/winter-cover.jpg`。
 
 ## 从思源一键发布
 
