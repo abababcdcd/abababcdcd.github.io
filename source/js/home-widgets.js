@@ -37,6 +37,7 @@
   const openEyes = face.src;
   const closedEyes = new Image();
   closedEyes.src = face.dataset.blinkSrc;
+  const blinkReady = closedEyes.decode().then(() => true, () => false);
   const message = pet.querySelector(".home-pet-message");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const motions = [
@@ -45,11 +46,13 @@
     ["translateY(-9px) rotate(6deg)", "translateY(1px) rotate(-3deg)"],
   ];
   let nextMotion = 0;
+  let latestClick = 0;
   let animation;
   let reopen;
   let dismissal;
 
-  button.addEventListener("click", () => {
+  button.addEventListener("click", async () => {
+    const click = ++latestClick;
     message.textContent = "喵。";
     clearTimeout(dismissal);
     dismissal = setTimeout(() => { message.textContent = ""; }, 2600);
@@ -61,16 +64,16 @@
       return;
     }
 
-    if (closedEyes.complete && closedEyes.naturalWidth) {
-      face.src = closedEyes.src;
-      reopen = setTimeout(() => { face.src = openEyes; }, 180);
-    }
-
     const transforms = ["none", ...motions[nextMotion], "none"];
     nextMotion = (nextMotion + 1) % motions.length;
     animation = button.animate(transforms.map((transform) => ({ transform })), {
       duration: 430,
       easing: "ease-out",
     });
+
+    if (await blinkReady && click === latestClick && !reducedMotion.matches) {
+      face.src = closedEyes.src;
+      reopen = setTimeout(() => { face.src = openEyes; }, 180);
+    }
   });
 })();
