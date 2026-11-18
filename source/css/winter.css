@@ -14,8 +14,8 @@ body::before {
 }
 
 body:has(#board-ctn .post-content)::before {
-  inset: -1.75rem;
-  filter: blur(14px);
+  inset: -0.5rem;
+  filter: blur(1.5px);
 }
 
 /* The cover is a single viewport layer, shared by the banner and page. */
@@ -27,6 +27,10 @@ body:has(#board-ctn .post-content)::before {
 #board {
   background-color: color-mix(in srgb, var(--board-bg-color) 94%, transparent);
   box-shadow: 0 14px 45px rgb(12 28 45 / 24%);
+}
+
+#board-ctn > #board {
+  background-color: color-mix(in srgb, var(--board-bg-color) 82%, transparent);
 }
 
 body > footer,
@@ -522,6 +526,10 @@ body > footer a {
 @media (max-width: 767px) {
   body::before {
     background-position: center, 70% center;
+  }
+
+  #board-ctn > #board {
+    margin-inline: 0.65rem;
   }
 }
 
