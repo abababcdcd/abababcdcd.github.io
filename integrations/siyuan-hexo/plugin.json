@@ -1,0 +1,10 @@
+{
+  "name": "siyuan-hexo-publisher",
+  "author": "abababcd",
+  "version": "0.1.0",
+  "minAppVersion": "3.8.0",
+  "backends": ["windows"],
+  "frontends": ["desktop"],
+  "displayName": {"default": "Publish to Hexo", "zh_CN": "发布到博客"},
+  "description": {"default": "Publish the current document to Hexo and GitHub Pages.", "zh_CN": "一键发布当前文档到 Hexo 博客。"}
+}
