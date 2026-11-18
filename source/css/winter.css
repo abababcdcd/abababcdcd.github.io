@@ -123,6 +123,7 @@
 .home-profile {
   grid-area: profile;
   align-self: start;
+  scroll-margin-top: 5rem;
   position: sticky;
   top: 5rem;
   margin-inline-end: 1.35rem;
