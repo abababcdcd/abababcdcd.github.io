@@ -127,11 +127,60 @@
   position: sticky;
   top: 5rem;
   margin-inline-end: 1.35rem;
-  padding: 1.1rem 0.9rem 0.8rem;
+  color: var(--text-color);
+}
+
+.home-profile > details {
   border: 1px solid var(--line-color);
   border-radius: 0.65rem;
   background: var(--body-bg-color);
-  color: var(--text-color);
+}
+
+.home-profile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: inherit;
+  list-style: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.home-profile-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.home-profile-toggle::after {
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-inline-end: 0.15rem;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: rotate(45deg);
+  content: "";
+}
+
+.home-profile details[open] > .home-profile-toggle::after {
+  transform: rotate(225deg);
+}
+
+.home-profile-toggle:hover,
+.home-profile-toggle:focus-visible {
+  color: var(--post-link-color);
+}
+
+.home-profile-toggle:focus-visible {
+  outline: 2px solid var(--post-link-color);
+  outline-offset: -3px;
+}
+
+.home-profile-content {
+  padding: 0.9rem 0.85rem 0.8rem;
+  border-top: 1px solid var(--line-color);
   text-align: center;
 }
 
@@ -286,32 +335,33 @@
 
 @media (max-width: 991.98px) {
   #board.home-with-profile {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "profile" "posts";
-    gap: 1.3rem;
+    display: block;
   }
 
   .home-profile {
-    position: static;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    gap: 0.5rem 0.8rem;
-    max-width: none;
-    margin-inline: 1rem;
-    text-align: start;
-  }
-
-  .home-profile-avatar {
-    width: 56px;
-    height: 56px;
+    position: fixed;
+    inset: 5rem 0 auto auto;
+    z-index: 4;
     margin: 0;
   }
 
-  .home-profile-links {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-    margin-top: 0;
+  .home-profile > details {
+    border-inline-end: 0;
+    border-radius: 0.6rem 0 0 0.6rem;
+    background: var(--board-bg-color);
+    box-shadow: 0 3px 12px rgb(24 43 65 / 12%);
+  }
+
+  .home-profile-content {
+    position: absolute;
+    inset: calc(100% + 0.45rem) 0.65rem auto auto;
+    width: min(14rem, calc(100vw - 1.3rem));
+    max-height: calc(100dvh - 8.5rem);
+    overflow-y: auto;
+    border: 1px solid var(--line-color);
+    border-radius: 0.6rem;
+    background: var(--board-bg-color);
+    box-shadow: 0 8px 24px rgb(24 43 65 / 18%);
   }
 
   .side-col:has(> .reading-toc) {
