@@ -713,14 +713,8 @@ body:has(#board-ctn) #subtitle {
   display: block;
   width: clamp(4.2rem, 7vw, 6.25rem);
   height: auto;
+  transform-origin: 50% 88%;
   filter: drop-shadow(0 4px 5px rgb(26 38 51 / 28%));
-}
-
-.home-pet-button .home-pet-blink {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  filter: none;
 }
 
 .home-pet-message {
