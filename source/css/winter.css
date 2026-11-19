@@ -1,7 +1,6 @@
 body {
   isolation: isolate;
-  --winter-blur: 10.5px;
-  --winter-panel: color-mix(in srgb, var(--board-bg-color) 85%, transparent);
+  --winter-panel: color-mix(in srgb, var(--board-bg-color) 75%, transparent);
   --winter-frame: color-mix(in srgb, var(--board-bg-color) 62%, var(--line-color));
   --winter-heading: Georgia, "Noto Serif SC", "Songti SC", SimSun, serif;
 }
@@ -9,18 +8,12 @@ body {
 body::before {
   content: "";
   position: fixed;
-  inset: -2rem;
+  inset: 0;
   z-index: -1;
   pointer-events: none;
-  filter: blur(var(--winter-blur));
   background:
     linear-gradient(180deg, rgb(13 29 46 / 38%), rgb(13 29 46 / 8%) 45%, rgb(13 29 46 / 52%)),
     #42617e url("../img/winter-cover.jpg") center / cover no-repeat;
-}
-
-.winter-home:not(:has(main :target))::before {
-  inset: 0;
-  filter: none;
 }
 
 /* The cover is a single viewport layer, shared by the banner and page. */
@@ -30,12 +23,11 @@ body::before {
 }
 
 #board {
-  background-color: color-mix(in srgb, var(--board-bg-color) 94%, transparent);
+  background-color: var(--winter-panel);
   box-shadow: 0 14px 45px rgb(12 28 45 / 24%);
 }
 
 #board-ctn > #board {
-  background-color: color-mix(in srgb, var(--board-bg-color) 82%, transparent);
   scroll-margin-top: 5rem;
 }
 
@@ -60,8 +52,7 @@ body > footer a {
 #navbar,
 #mobile-grid-menu {
   --navbar-text-color: var(--text-color);
-  background-color: var(--winter-panel);
-  backdrop-filter: blur(var(--winter-blur));
+  background-color: color-mix(in srgb, var(--board-bg-color) 85%, transparent);
 }
 
 #navbar {
@@ -363,7 +354,7 @@ body:has(#board-ctn) #subtitle {
 
 .winter-article-card:focus-within,
 .winter-article-card:hover {
-  background-color: color-mix(in srgb, var(--board-bg-color) 94%, transparent);
+  border-color: #c99d62;
 }
 
 .winter-article-with-cover {
@@ -440,7 +431,7 @@ body:has(#board-ctn) #subtitle {
 }
 
 .winter-home #article-directory {
-  margin: 1.7rem 0 0;
+  margin: 0 0 1.55rem;
   padding: clamp(1rem, 3vw, 1.55rem);
 }
 
@@ -808,7 +799,7 @@ body:has(#board-ctn) #subtitle {
     overflow-y: auto;
     border: 1px solid var(--line-color);
     border-radius: 0.6rem;
-    background: var(--board-bg-color);
+    background: var(--winter-panel);
     box-shadow: 0 8px 24px rgb(24 43 65 / 18%);
   }
 
@@ -849,7 +840,7 @@ body:has(#board-ctn) #subtitle {
     max-height: min(55dvh, 28rem);
     border: 1px solid var(--line-color);
     border-radius: 0.6rem;
-    background: var(--board-bg-color);
+    background: var(--winter-panel);
     box-shadow: 0 8px 24px rgb(24 43 65 / 18%);
   }
 }

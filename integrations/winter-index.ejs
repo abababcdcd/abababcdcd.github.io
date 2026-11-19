@@ -9,6 +9,9 @@ const headingTag = page.current === 1 ? 'h2' : 'h1'
 %>
 
 <section id="articles" class="winter-feed" aria-labelledby="winter-feed-title" tabindex="-1">
+  <% if (page.current === 1) { %>
+    <%- render_article_directory(site, false, config, url_for) %>
+  <% } %>
   <div class="winter-feed-heading">
     <<%= headingTag %> id="winter-feed-title">全部文章</<%= headingTag %>>
     <span><%= site.index_posts.length %> 篇</span>
@@ -58,7 +61,3 @@ const headingTag = page.current === 1 ? 'h2' : 'h1'
   <% }) %>
   <%- partial('_partials/paginator') %>
 </section>
-
-<% if (page.current === 1) { %>
-  <%- render_article_directory(site, false, config, url_for) %>
-<% } %>
