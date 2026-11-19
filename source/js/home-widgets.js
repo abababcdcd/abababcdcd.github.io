@@ -164,34 +164,35 @@
   });
 
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  const expressions = [
-    [face.dataset.blinkSrc, 190],
-    [face.dataset.winkSrc, 670],
-    [face.dataset.alertSrc, 750],
-  ].map(([source, hold]) => {
+  function preloadFace(source) {
     const image = new Image();
     image.src = source;
-    return { hold, ready: image.decode().then(() => image.src, () => null) };
-  });
+    return image.decode().then(() => image.src, () => null);
+  }
+
+  const blink = { ready: preloadFace(face.dataset.blinkSrc), hold: 190 };
+  const relaxed = { ready: blink.ready, hold: 640 };
+  const wink = { ready: preloadFace(face.dataset.winkSrc), hold: 670 };
+  const surprised = { ready: preloadFace(face.dataset.alertSrc), hold: 750 };
   const bounce = [
     { transform: "scale(1.16, 0.83)", offset: 0.22, easing: "cubic-bezier(0.2, 0.72, 0.4, 1)" },
     { transform: "scale(0.9, 1.14)", offset: 0.49, easing: "ease-in-out" },
     { transform: "scale(1.04, 0.97)", offset: 0.74, easing: "ease-in-out" },
     { transform: "scale(1)", offset: 1 },
   ];
-  const quotes = [
-    "喵，我在。",
-    "这个靠窗的位置给你留着。",
-    "嗯？雪又下大了？",
-    "晒到太阳就很满足。",
-    "我在数窗外的雪花。数到三就忘了。",
-    "窗外很冷，屋里刚好。",
-    "写累了就歇一会儿。",
-    "走慢一点，雪地里有脚印。",
-    "这个冬天也要认真晒太阳。",
-    "今天的雪很安静。",
-    "别急，先把这一行写完。",
-    "猫的工作就是守着窗边的阳光。",
+  const reactions = [
+    ["喵，我在。", blink],
+    ["这个靠窗的位置给你留着。", wink],
+    ["嗯？雪又下大了？", surprised],
+    ["晒到太阳就很满足。", relaxed],
+    ["我在数窗外的雪花。数到三就忘了。", wink],
+    ["窗外很冷，屋里刚好。", relaxed],
+    ["写累了就歇一会儿。", blink],
+    ["走慢一点，雪地里有脚印。", null],
+    ["这个冬天也要认真晒太阳。", relaxed],
+    ["今天的雪很安静。", relaxed],
+    ["别急，先把这一行写完。", null],
+    ["猫的工作就是守着窗边的阳光。", wink],
   ];
   let latestClick = 0;
   let animation;
@@ -200,8 +201,8 @@
 
   async function greet() {
     const click = ++latestClick;
-    const index = click - 1;
-    message.textContent = quotes[index % quotes.length];
+    const [quote, expression] = reactions[(click - 1) % reactions.length];
+    message.textContent = quote;
     placeMessage();
     clearTimeout(dismissal);
     dismissal = setTimeout(() => { message.textContent = ""; }, 3600);
@@ -217,11 +218,10 @@
     // Start from the current shape when another tap interrupts a bounce.
     animation = face.animate([{ transform, offset: 0, easing: "ease-in-out" }, ...bounce], 560);
 
-    const expression = expressions[index % expressions.length];
-    const source = await expression.ready;
+    const source = await expression?.ready;
     if (click !== latestClick || reducedMotion.matches) return;
     face.src = source || openEyes;
-    reopen = setTimeout(() => { face.src = openEyes; }, expression.hold);
+    if (source) reopen = setTimeout(() => { face.src = openEyes; }, expression.hold);
   }
 
   button.addEventListener("click", (event) => {
