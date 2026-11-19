@@ -715,13 +715,27 @@ body:has(#board-ctn) #subtitle {
   cursor: grabbing;
 }
 
-.home-pet-button img {
+.home-pet-face {
+  position: relative;
   display: block;
   width: clamp(4.2rem, 7vw, 6.25rem);
-  height: auto;
   transform-origin: 50% 88%;
   filter: drop-shadow(0 4px 5px rgb(26 38 51 / 28%));
   pointer-events: none;
+}
+
+.home-pet-face img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.home-pet-mouth {
+  position: absolute;
+  inset: 50% 20% 10%;
+  background-size: 100% 100%;
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 60%, transparent 96%);
+  opacity: 0;
 }
 
 .home-pet-message {

@@ -33,7 +33,8 @@
   if (!pet) return;
 
   const button = pet.querySelector(".home-pet-button");
-  const face = button.querySelector("img");
+  const head = button.querySelector(".home-pet-face");
+  const face = head.querySelector("img");
   const openEyes = face.src;
   const message = pet.querySelector(".home-pet-message");
   const viewport = window.visualViewport;
@@ -174,54 +175,76 @@
   const relaxed = { ready: blink.ready, hold: 640 };
   const wink = { ready: preloadFace(face.dataset.winkSrc), hold: 670 };
   const surprised = { ready: preloadFace(face.dataset.alertSrc), hold: 750 };
+  const mouthReady = Promise.all([...head.querySelectorAll(".home-pet-mouth")].map(async (layer) => {
+    const source = await preloadFace(layer.dataset.src);
+    if (!source) return null;
+    layer.style.backgroundImage = `url(${JSON.stringify(source)})`;
+    return layer;
+  })).then((layers) => layers.filter(Boolean));
   const bounce = [
     { transform: "scale(1.16, 0.83)", offset: 0.22, easing: "cubic-bezier(0.2, 0.72, 0.4, 1)" },
     { transform: "scale(0.9, 1.14)", offset: 0.49, easing: "ease-in-out" },
     { transform: "scale(1.04, 0.97)", offset: 0.74, easing: "ease-in-out" },
     { transform: "scale(1)", offset: 1 },
   ];
+  const soft = "soft";
+  const open = "open";
+  const closed = "closed";
+  // Each mouth pose is one beat. The eye expression lands on the accented word or the last pause.
   const reactions = [
-    ["喵，我在。", blink],
-    ["这个靠窗的位置给你留着。", wink],
-    ["嗯？雪又下大了？", surprised],
-    ["晒到太阳就很满足。", relaxed],
-    ["我在数窗外的雪花。数到三就忘了。", wink],
-    ["窗外很冷，屋里刚好。", relaxed],
-    ["写累了就歇一会儿。", blink],
-    ["走慢一点，雪地里有脚印。", null],
-    ["这个冬天也要认真晒太阳。", relaxed],
-    ["今天的雪很安静。", relaxed],
-    ["别急，先把这一行写完。", null],
-    ["猫的工作就是守着窗边的阳光。", wink],
+    ["喵，我在。", [open, soft, closed, soft], blink, 520],
+    ["这个靠窗的位置给你留着。", [soft, soft, closed, soft, soft, closed, soft], relaxed, 940],
+    ["嗯？雪又下大了？", [soft, closed, closed, open, soft, open], surprised, 410],
+    ["晒到太阳就很满足。", [soft, soft, closed, soft, soft], relaxed, 700],
+    ["我在数窗外的雪花。数到三就忘了。", [soft, soft, open, soft, closed, closed, soft, open, soft, closed, soft], wink, 1280],
+    ["窗外很冷，屋里刚好。", [soft, soft, closed, closed, soft, soft], relaxed, 780],
+    ["写累了就歇一会儿。", [soft, soft, closed, soft, soft], relaxed, 620],
+    ["走慢一点，雪地里有脚印。", [soft, closed, closed, soft, open, soft], blink, 820],
+    ["这个冬天也要认真晒太阳。", [soft, soft, closed, open, soft, soft], relaxed, 780],
+    ["今天的雪很安静。", [soft, soft, closed, soft, soft], relaxed, 700],
+    ["别急，先把这一行写完。", [soft, closed, closed, soft, soft, soft], blink, 850],
+    ["猫的工作就是守着窗边的阳光。", [soft, soft, closed, open, soft, closed, soft], wink, 920],
   ];
   let latestClick = 0;
   let animation;
-  let reopen;
+  let mouthAnimations = [];
+  let eyeTimer;
   let dismissal;
 
-  async function greet() {
+  async function speak(shapes, click) {
+    const layers = await mouthReady;
+    if (click !== latestClick || reducedMotion.matches) return;
+    const poses = [closed, ...shapes, closed];
+    mouthAnimations = layers.map((layer) => layer.animate(
+      poses.map((shape) => ({ opacity: shape === layer.dataset.shape ? 1 : 0 })),
+      (poses.length - 1) * 135,
+    ));
+  }
+
+  function greet() {
     const click = ++latestClick;
-    const [quote, expression] = reactions[(click - 1) % reactions.length];
+    const [quote, shapes, eyes, eyeDelay] = reactions[(click - 1) % reactions.length];
     message.textContent = quote;
     placeMessage();
     clearTimeout(dismissal);
     dismissal = setTimeout(() => { message.textContent = ""; }, 3600);
 
-    const transform = getComputedStyle(face).transform;
+    const transform = getComputedStyle(head).transform;
     animation?.cancel();
-    clearTimeout(reopen);
-    if (reducedMotion.matches) {
-      face.src = openEyes;
-      return;
-    }
+    mouthAnimations.forEach((motion) => motion.cancel());
+    clearTimeout(eyeTimer);
+    if (face.src !== openEyes) face.src = openEyes;
+    if (reducedMotion.matches) return;
 
     // Start from the current shape when another tap interrupts a bounce.
-    animation = face.animate([{ transform, offset: 0, easing: "ease-in-out" }, ...bounce], 560);
-
-    const source = await expression?.ready;
-    if (click !== latestClick || reducedMotion.matches) return;
-    face.src = source || openEyes;
-    if (source) reopen = setTimeout(() => { face.src = openEyes; }, expression.hold);
+    animation = head.animate([{ transform, offset: 0, easing: "ease-in-out" }, ...bounce], 560);
+    speak(shapes, click);
+    eyeTimer = setTimeout(async () => {
+      const source = await eyes.ready;
+      if (!source || click !== latestClick || reducedMotion.matches) return;
+      face.src = source;
+      eyeTimer = setTimeout(() => { face.src = openEyes; }, eyes.hold);
+    }, eyeDelay);
   }
 
   button.addEventListener("click", (event) => {
