@@ -311,6 +311,10 @@ body:has(#board-ctn) #subtitle {
   scroll-margin-top: 5.25rem;
 }
 
+.winter-feed:focus {
+  outline: none;
+}
+
 .winter-feed-heading {
   display: flex;
   align-items: baseline;
@@ -339,7 +343,7 @@ body:has(#board-ctn) #subtitle {
 }
 
 .winter-article-card,
-.winter-home #article-directory {
+.winter-browse {
   border: 1px solid var(--winter-frame);
   border-radius: 0.9rem;
   background: var(--winter-panel);
@@ -432,9 +436,57 @@ body:has(#board-ctn) #subtitle {
   overflow-wrap: anywhere;
 }
 
-.winter-home #article-directory {
-  margin: 0 0 1.55rem;
-  padding: clamp(1rem, 3vw, 1.55rem);
+.winter-browse {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 0 0 1.35rem;
+  padding: 0.65rem;
+  scroll-margin-top: 5.25rem;
+}
+
+.winter-browse-search,
+.winter-browse-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  border: 1px solid var(--line-color);
+  border-radius: 0.5rem;
+  background: var(--board-bg-color);
+}
+
+.winter-browse-search {
+  flex: 1 1 10rem;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  padding-inline: 0.8rem;
+  color: var(--text-color);
+  cursor: pointer;
+  text-align: start;
+}
+
+.winter-browse-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.winter-browse-links a {
+  padding-inline: 0.7rem;
+  color: var(--post-link-color);
+  font-size: 0.86rem;
+}
+
+.winter-browse :is(button, a):is(:hover, :focus-visible) {
+  border-color: var(--link-hover-color);
+  color: var(--link-hover-color);
+}
+
+.winter-browse :is(button, a):focus-visible {
+  outline: 2px solid var(--link-hover-color);
+  outline-offset: 2px;
 }
 
 #board .list-group-item:has(> .list-group-item-title) {

@@ -10,7 +10,19 @@ const headingTag = page.current === 1 ? 'h2' : 'h1'
 
 <section id="articles" class="winter-feed" aria-labelledby="winter-feed-title" tabindex="-1">
   <% if (page.current === 1) { %>
-    <%- render_article_directory(site, false, config, url_for) %>
+    <%# Keep the previous homepage directory link usable. %>
+    <nav id="article-directory" class="winter-browse" aria-label="文章浏览">
+      <% if (theme.search.enable) { %>
+        <button class="winter-browse-search" type="button" data-toggle="modal" data-target="#modalSearch">
+          <i class="iconfont icon-search" aria-hidden="true"></i>
+          搜索文章
+        </button>
+      <% } %>
+      <div class="winter-browse-links">
+        <a href="<%= url_for(config.category_dir + '/') %>">全部分类</a>
+        <a href="<%= url_for(config.tag_dir + '/') %>">全部标签</a>
+      </div>
+    </nav>
   <% } %>
   <div class="winter-feed-heading">
     <<%= headingTag %> id="winter-feed-title">全部文章</<%= headingTag %>>
