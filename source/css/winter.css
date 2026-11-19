@@ -724,20 +724,10 @@ body:has(#board-ctn) #subtitle {
   pointer-events: none;
 }
 
-.home-pet-face img {
+.home-pet-face > :not([hidden]) {
   display: block;
   width: 100%;
   height: auto;
-}
-
-.home-pet-mouth {
-  position: absolute;
-  inset: 50% 20% 10%;
-  background-size: 100% 100%;
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 60%, transparent 96%);
-  transform-origin: 50% 26%;
-  transform: scale(0.9, 0.58);
-  opacity: 0;
 }
 
 .home-pet-message {

@@ -35,8 +35,7 @@
   const button = pet.querySelector(".home-pet-button");
   const head = button.querySelector(".home-pet-face");
   const face = head.querySelector("img");
-  const mouth = head.querySelector(".home-pet-mouth");
-  const openEyes = face.src;
+  const canvas = head.querySelector("canvas");
   const message = pet.querySelector(".home-pet-message");
   const viewport = window.visualViewport;
   const positionKey = "home-pet-position";
@@ -166,20 +165,99 @@
   });
 
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  function preloadFace(source) {
-    const image = new Image();
-    image.src = source;
-    return image.decode().then(() => image.src, () => null);
+
+  function createFaceRenderer() {
+    const drawing = canvas.getContext("2d", { willReadFrequently: true });
+    if (!drawing) return null;
+    drawing.drawImage(face, 0, 0, canvas.width, canvas.height);
+
+    const mouth = { left: 128, top: 207, width: 64, height: 41 };
+    const eyes = { left: 77, top: 121, width: 164, height: 60 };
+    const read = ({ left, top, width, height }) => drawing.getImageData(left, top, width, height);
+    const originalMouth = read(mouth);
+    const shapedMouth = drawing.createImageData(mouth.width, mouth.height);
+    shapedMouth.data.set(originalMouth.data);
+    const originalEyes = read(eyes);
+    const scratch = document.createElement("canvas");
+    scratch.width = eyes.width;
+    scratch.height = eyes.height;
+    const samples = scratch.getContext("2d", { willReadFrequently: true });
+    if (!samples) return null;
+    const radius = (mouth.width - 1) / 2;
+    const mouthWeights = Array.from({ length: mouth.width }, (_, x) => (1 - ((x - radius) / radius) ** 2) ** 2);
+
+    function prepareEyes(frame) {
+      samples.clearRect(0, 0, eyes.width, eyes.height);
+      samples.drawImage(frame, -eyes.left, -eyes.top, canvas.width, canvas.height);
+      const pixels = samples.getImageData(0, 0, eyes.width, eyes.height);
+      for (let y = 0; y < eyes.height; y++) {
+        for (let x = 0; x < eyes.width; x++) {
+          const distance = Math.hypot(Math.min(Math.abs(x - 35), Math.abs(x - 128)) / 35, (y - 31) / 29);
+          const weight = clamp((1 - distance) / 0.25, 0, 1);
+          const offset = (y * eyes.width + x) * 4;
+          for (let channel = offset; channel < offset + 3; channel++) {
+            const base = originalEyes.data[channel];
+            pixels.data[channel] = base + (pixels.data[channel] - base) * weight;
+          }
+          pixels.data[offset + 3] = originalEyes.data[offset + 3];
+        }
+      }
+      return pixels;
+    }
+
+    function showEyes(pixels = originalEyes) {
+      drawing.putImageData(pixels, eyes.left, eyes.top);
+    }
+
+    function moveMouth(amount) {
+      if (amount === 0) {
+        drawing.putImageData(originalMouth, mouth.left, mouth.top);
+        return;
+      }
+      const lip = 14;
+      // Resample the same muzzle, with the drawing pinned at the nose and chin.
+      for (let y = 0; y < mouth.height; y++) {
+        const vertical = y <= lip ? y / lip : (mouth.height - 1 - y) / (mouth.height - 1 - lip);
+        const shift = 6 * amount * vertical;
+        for (let x = 0; x < mouth.width; x++) {
+          const sourceY = y - shift * mouthWeights[x];
+          const row = Math.floor(sourceY);
+          const mix = sourceY - row;
+          const upper = (row * mouth.width + x) * 4;
+          const lower = (Math.min(row + 1, mouth.height - 1) * mouth.width + x) * 4;
+          const offset = (y * mouth.width + x) * 4;
+          for (let channel = 0; channel < 3; channel++) {
+            const color = originalMouth.data[upper + channel];
+            shapedMouth.data[offset + channel] = color + (originalMouth.data[lower + channel] - color) * mix;
+          }
+        }
+      }
+      drawing.putImageData(shapedMouth, mouth.left, mouth.top);
+    }
+
+    canvas.hidden = false;
+    face.hidden = true;
+    return { prepareEyes, showEyes, moveMouth };
   }
 
-  const blink = { ready: preloadFace(face.dataset.blinkSrc), hold: 190 };
+  let renderer;
+  const renderReady = face.decode().then(() => {
+    renderer = createFaceRenderer();
+    return renderer;
+  }).catch(() => null);
+
+  async function preloadEyes(source) {
+    const image = new Image();
+    image.src = source;
+    await image.decode();
+    const drawing = await renderReady;
+    return drawing?.prepareEyes(image);
+  }
+
+  const blink = { ready: preloadEyes(face.dataset.blinkSrc).catch(() => null), hold: 190 };
   const relaxed = { ready: blink.ready, hold: 640 };
-  const wink = { ready: preloadFace(face.dataset.winkSrc), hold: 670 };
-  const surprised = { ready: preloadFace(face.dataset.alertSrc), hold: 750 };
-  const mouthReady = preloadFace(mouth.dataset.src).then((source) => {
-    if (source) mouth.style.backgroundImage = `url(${JSON.stringify(source)})`;
-    return source;
-  });
+  const wink = { ready: preloadEyes(face.dataset.winkSrc).catch(() => null), hold: 670 };
+  const surprised = { ready: preloadEyes(face.dataset.alertSrc).catch(() => null), hold: 750 };
   const bounce = [
     { transform: "scale(1.16, 0.83)", offset: 0.22, easing: "cubic-bezier(0.2, 0.72, 0.4, 1)" },
     { transform: "scale(0.9, 1.14)", offset: 0.49, easing: "ease-in-out" },
@@ -206,18 +284,29 @@
   ];
   let latestClick = 0;
   let animation;
-  let mouthAnimation;
+  let mouthFrame = 0;
   let eyeTimer;
   let dismissal;
 
   async function speak(beats, click) {
-    const source = await mouthReady;
-    if (!source || click !== latestClick || reducedMotion.matches) return;
+    const drawing = await renderReady;
+    if (!drawing || click !== latestClick || reducedMotion.matches) return;
     const poses = [closed, ...beats, closed];
-    mouthAnimation = mouth.animate(
-      poses.map((opacity) => ({ opacity })),
-      (poses.length - 1) * 135,
-    );
+    let start;
+    function drawFrame(time) {
+      start ??= time;
+      const phase = (time - start) / 135;
+      const beat = Math.floor(phase);
+      if (beat >= poses.length - 1 || reducedMotion.matches) {
+        drawing.moveMouth(closed);
+        return;
+      }
+      const progress = phase - beat;
+      const blend = progress ** 2 * (3 - 2 * progress);
+      drawing.moveMouth(poses[beat] + (poses[beat + 1] - poses[beat]) * blend);
+      mouthFrame = requestAnimationFrame(drawFrame);
+    }
+    mouthFrame = requestAnimationFrame(drawFrame);
   }
 
   function greet() {
@@ -230,19 +319,20 @@
 
     const transform = getComputedStyle(head).transform;
     animation?.cancel();
-    mouthAnimation?.cancel();
+    cancelAnimationFrame(mouthFrame);
     clearTimeout(eyeTimer);
-    if (face.src !== openEyes) face.src = openEyes;
+    renderer?.moveMouth(closed);
+    renderer?.showEyes();
     if (reducedMotion.matches) return;
 
     // Start from the current shape when another tap interrupts a bounce.
     animation = head.animate([{ transform, offset: 0, easing: "ease-in-out" }, ...bounce], 560);
     speak(beats, click);
     eyeTimer = setTimeout(async () => {
-      const source = await eyes.ready;
-      if (!source || click !== latestClick || reducedMotion.matches) return;
-      face.src = source;
-      eyeTimer = setTimeout(() => { face.src = openEyes; }, eyes.hold);
+      const pixels = await eyes.ready;
+      if (!pixels || click !== latestClick || reducedMotion.matches) return;
+      renderer.showEyes(pixels);
+      eyeTimer = setTimeout(() => renderer.showEyes(), eyes.hold);
     }, eyeDelay);
   }
 
