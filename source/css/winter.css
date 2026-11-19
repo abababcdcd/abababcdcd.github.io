@@ -735,7 +735,13 @@ body:has(#board-ctn) #subtitle {
   inset: 50% 20% 10%;
   background-size: 100% 100%;
   mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 60%, transparent 96%);
+  transform-origin: 50% 26%;
+  transform: scale(0.96, 0.82);
   opacity: 0;
+}
+
+.home-pet-mouth[data-shape="open"] {
+  transform: scale(0.88, 0.64);
 }
 
 .home-pet-message {
