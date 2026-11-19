@@ -13,10 +13,14 @@ hexo.extend.filter.register("before_generate", function () {
 
 // Run after Fluid's lazy-loading filter so these small images load immediately.
 hexo.extend.filter.register("after_render:html", function (html, locals) {
-  if (this.config.theme !== "fluid" || !locals?.page.__index || locals.page.current !== 1) return html;
+  if (this.config.theme !== "fluid") return html;
 
   const urlFor = this.extend.helper.get("url_for").bind(this);
   const href = (url) => escapeHTML(urlFor(url));
+  html = html.replace(/(<a class="navbar-brand" href=")[^"]*"/,
+    (_, opening) => `${opening}${href("/#articles")}"`);
+  if (!locals?.page.__index || locals.page.current !== 1) return html;
+
   const name = escapeHTML(this.config.author || this.config.title);
   const intro = escapeHTML(this.config.description || "");
   const settings = validateProfileSettings(locals.site.data["home-profile"]);
