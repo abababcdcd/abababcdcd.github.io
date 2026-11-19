@@ -5,7 +5,7 @@ const { tocObj } = require("hexo-util");
 function groupedHeadings(content) {
   const root = { level: 0, children: [] };
   const parents = [root];
-  const anchors = new Set();
+  const anchors = new Set(["board"]);
 
   for (const heading of tocObj(content)) {
     if (!heading.id || !heading.text.trim() || anchors.has(heading.id)) continue;
@@ -30,11 +30,11 @@ function renderList(headings) {
 hexo.extend.helper.register("render_reading_toc", function () {
   if (this.page.toc === false || this.page.encrypt === true) return "";
   const headings = groupedHeadings(this.page.content || "");
-  if (!headings.length) return "";
+  const entries = [{ id: "board", text: "正文开头", children: [] }, ...headings];
 
   return `<details class="reading-toc" open>
     <summary>章节目录</summary>
-    <nav class="reading-toc-list" aria-label="文章章节" tabindex="0">${renderList(headings)}</nav>
+    <nav class="reading-toc-list" aria-label="文章章节" tabindex="0">${renderList(entries)}</nav>
   </details>
   <script src="${this.url_for("/js/reading-toc.js")}" defer></script>`;
 });
