@@ -75,21 +75,14 @@ function renderDirectory(site, byTag, config, urlFor) {
   </nav>`;
 }
 
+hexo.extend.helper.register("render_article_directory", renderDirectory);
+
 hexo.extend.filter.register("after_render:html", function (html, locals) {
   if (this.config.theme !== "fluid" || !locals?.page) return html;
-  const index = locals.page.__index;
-  const home = index && locals.page.current === 1;
   const tagIndex = locals.path === `${this.config.tag_dir.replace(/\/$/, "")}/index.html`;
-  if (index) {
-    // Fluid adds a focusable excerpt link even when the excerpt is empty.
-    html = html.replace(/<a class="index-excerpt\b[^"]*"[^>]*>\s*<div>\s*<\/div>\s*<\/a>/g, "");
-  }
-  if (!home && !tagIndex) return html;
+  if (!tagIndex) return html;
 
   const urlFor = this.extend.helper.get("url_for").bind(this);
-  const directory = renderDirectory(locals.site, tagIndex, this.config, urlFor);
-  // Fluid uses this content column on both the home and tag index templates.
-  const articleHeading = home && locals.page.posts?.length
-    ? '<h2 class="home-articles-title">文章列表</h2>' : "";
-  return html.replace('<div class="col-12 col-md-10 m-auto">', (column) => `${column}\n${directory}\n${articleHeading}`);
+  const directory = renderDirectory(locals.site, true, this.config, urlFor);
+  return html.replace('<div class="col-12 col-md-10 m-auto">', (column) => `${column}\n${directory}`);
 });

@@ -41,4 +41,5 @@ hexo.extend.helper.register("render_reading_toc", function () {
 
 hexo.extend.filter.register("theme_inject", (injects) => {
   injects.postRight.raw("reading-toc", "<%- render_reading_toc() %>");
+  injects.postMetaTop.raw("back-to-articles", '<a class="winter-post-back" href="<%= url_for("/#articles") %>">← 返回文章列表</a>');
 });

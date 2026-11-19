@@ -1,5 +1,8 @@
 body {
   isolation: isolate;
+  --winter-panel: color-mix(in srgb, var(--board-bg-color) 85%, transparent);
+  --winter-frame: color-mix(in srgb, var(--board-bg-color) 62%, var(--line-color));
+  --winter-heading: Georgia, "Noto Serif SC", "Songti SC", SimSun, serif;
 }
 
 body::before {
@@ -51,9 +54,94 @@ body > footer a {
   letter-spacing: 0.015em;
 }
 
-.navbar .nav-link:hover,
-.navbar .nav-link:focus-visible {
-  color: #ffdaa8;
+#navbar,
+#mobile-grid-menu {
+  --navbar-text-color: var(--text-color);
+  background-color: var(--winter-panel);
+  backdrop-filter: blur(14px);
+}
+
+#navbar {
+  border-bottom: 1px solid var(--winter-frame);
+  box-shadow: 0 3px 20px rgb(15 32 50 / 12%);
+}
+
+#navbar .navbar-brand {
+  font-family: var(--winter-heading);
+  letter-spacing: 0.02em;
+}
+
+#navbar .nav-link:is(:hover, :focus-visible) {
+  color: var(--link-hover-color);
+}
+
+.winter-home .header-inner {
+  height: 100vh !important;
+  height: 100svh !important;
+}
+
+.winter-home > main {
+  min-height: calc(100svh - 4.5rem);
+}
+
+.winter-home #banner .mask {
+  display: none;
+}
+
+.winter-welcome {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  padding: 5rem 1.25rem 2rem;
+  background: linear-gradient(90deg, rgb(12 28 43 / 53%), transparent 78%);
+}
+
+.winter-welcome-inner {
+  width: min(100%, 66rem);
+  margin-inline: auto;
+}
+
+.winter-welcome h1 {
+  margin: 0 0 1.65rem;
+  font: 700 clamp(2.45rem, 6vw, 5.25rem) / 1.13 var(--winter-heading);
+  color: #fff8eb;
+  text-shadow: 0 4px 18px rgb(14 30 45 / 48%);
+  overflow-wrap: anywhere;
+}
+
+.winter-enter,
+.winter-post-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8em;
+  border-radius: 0.55rem;
+  font-weight: 650;
+  text-shadow: none;
+}
+
+.winter-enter {
+  min-height: 2.85rem;
+  padding: 0.55rem 1rem;
+  background: #f7dfad;
+  color: #20364b;
+}
+
+.winter-enter:is(:hover, :focus-visible) {
+  background: #fff0d1;
+  color: #20364b;
+}
+
+.winter-post-back {
+  margin-top: 0.9rem;
+  padding: 0.33rem 0.72rem;
+  background: var(--winter-panel);
+  color: var(--text-color);
+  font-size: 0.83rem;
+}
+
+body:has(#board-ctn) #subtitle {
+  font-family: var(--winter-heading);
 }
 
 .article-directory {
@@ -82,8 +170,7 @@ body > footer a {
   margin-bottom: 0.85rem;
 }
 
-.article-directory-heading h2,
-.home-articles-title {
+.article-directory-heading h2 {
   font-size: 1.4rem;
   font-weight: 650;
   margin: 0;
@@ -179,8 +266,11 @@ body > footer a {
   display: grid;
   grid-template-columns: minmax(12.5rem, 15rem) minmax(0, 1fr);
   grid-template-areas: "profile posts";
-  gap: 1rem;
-  padding-block: clamp(1.4rem, 3vw, 2.25rem);
+  gap: clamp(1rem, 2.5vw, 2rem);
+  margin-top: 0;
+  padding-block: clamp(1.5rem, 4vw, 3rem);
+  background: transparent;
+  box-shadow: none;
 }
 
 #board.home-with-profile[data-profile-side="right"] {
@@ -195,40 +285,138 @@ body > footer a {
 
 .home-with-profile > .container > .row > .col-md-10 {
   flex-basis: 100%;
-  max-width: 50rem;
-  padding-inline: clamp(1rem, 3.5vw, 2.6rem);
-}
-
-#board .index-card {
-  margin-bottom: 0;
-  padding-block: 0.9rem;
-}
-
-#board .index-card + .index-card {
-  border-top: 1px solid var(--line-color);
-}
-
-#board .index-info {
-  min-width: 0;
-  padding-block: 0;
-}
-
-#board .index-info.col-md-12 {
+  max-width: 100%;
   padding-inline: 0;
 }
 
-#board .index-header {
+.winter-feed {
+  scroll-margin-top: 5.25rem;
+}
+
+.winter-feed-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-block: 0 0.9rem;
+  padding: 0 0.08rem 0.7rem;
+  border-bottom: 1px solid var(--line-color);
+}
+
+.winter-feed-heading :is(h1, h2) {
+  margin: 0;
+  font: 700 clamp(1.55rem, 3.1vw, 2.2rem) / 1.25 var(--winter-heading);
+}
+
+.winter-feed-heading span {
+  white-space: nowrap;
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.winter-home .winter-feed-heading {
+  color: #fff8ec;
+  border-bottom-color: rgb(255 248 236 / 60%);
+  text-shadow: 0 2px 8px rgb(10 24 41 / 78%);
+}
+
+.winter-article-card,
+.winter-home #article-directory {
+  border: 1px solid var(--winter-frame);
+  border-radius: 0.9rem;
+  background: var(--winter-panel);
+  backdrop-filter: blur(7px);
+  box-shadow: 0 9px 28px rgb(16 33 50 / 16%);
+}
+
+.winter-article-card {
+  position: relative;
+  margin: 0 0 0.9rem;
+  padding: clamp(1rem, 3vw, 1.55rem);
+  border-inline-start: 3px solid #c99d62;
+}
+
+.winter-article-card:focus-within,
+.winter-article-card:hover {
+  background-color: color-mix(in srgb, var(--board-bg-color) 94%, transparent);
+}
+
+.winter-article-with-cover {
+  display: grid;
+  grid-template-columns: minmax(0, 0.36fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.winter-article-cover {
   display: block;
-  margin-bottom: 0.4rem;
-  font-size: clamp(1.15rem, 2vw, 1.4rem);
-  line-height: 1.4;
-  white-space: normal;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.winter-article-info {
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 
-#board .index-btm {
-  gap: 0.25rem 0;
-  font-size: 0.85rem;
+.winter-article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.65rem;
+  color: var(--sec-text-color);
+  font-size: 0.8rem;
+}
+
+.winter-article-meta time {
+  font-variant-numeric: tabular-nums;
+}
+
+.winter-article-categories a,
+.winter-article-pin {
+  color: var(--link-hover-color);
+}
+
+.winter-article-pin {
+  font-weight: 650;
+}
+
+.winter-article-title {
+  margin: 0.4rem 0 0;
+  font: 700 clamp(1.32rem, 2.4vw, 1.85rem) / 1.35 var(--winter-heading);
+}
+
+.winter-article-excerpt {
+  margin: 0.52rem 0 0;
+  color: var(--sec-text-color);
+}
+
+.winter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.36rem;
+}
+
+.winter-article-card .winter-tags {
+  margin-top: 0.65rem;
+}
+
+.winter-tags a {
+  max-width: 100%;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid var(--line-color);
+  border-radius: 1em;
+  background-color: var(--board-bg-color);
+  color: var(--post-link-color);
+  font-size: 0.79rem;
+  overflow-wrap: anywhere;
+}
+
+.winter-home #article-directory {
+  margin: 1.7rem 0 0;
+  padding: clamp(1rem, 3vw, 1.55rem);
 }
 
 #board .list-group-item:has(> .list-group-item-title) {
@@ -255,18 +443,26 @@ body > footer a {
   scroll-margin-top: 5rem;
   position: sticky;
   top: 5rem;
-  margin-inline-start: 1.35rem;
   color: var(--text-color);
 }
 
-[data-profile-side="right"] .home-profile {
-  margin-inline: 0 1.35rem;
+.home-profile > details {
+  border: 1px solid var(--winter-frame);
+  border-radius: 0.9rem;
+  background: var(--winter-panel);
 }
 
-.home-profile > details {
-  border: 1px solid var(--line-color);
-  border-radius: 0.65rem;
-  background: var(--body-bg-color);
+.home-profile-tags {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line-color);
+  text-align: start;
+}
+
+.home-profile-tags h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.83rem;
+  font-weight: 650;
 }
 
 .home-profile-toggle {
@@ -551,15 +747,19 @@ body > footer a {
     display: block;
   }
 
+  .home-with-profile > .container > .row > .col-md-10 {
+    padding-inline: 1rem;
+  }
+
   .home-profile {
     position: fixed;
-    inset: 5rem auto auto 0;
+    inset: auto auto max(0.85rem, env(safe-area-inset-bottom)) 0;
     z-index: 4;
     margin: 0;
   }
 
   [data-profile-side="right"] .home-profile {
-    inset: 5rem 0 auto auto;
+    inset-inline: auto 0;
     margin: 0;
   }
 
@@ -572,7 +772,7 @@ body > footer a {
 
   .home-profile-content {
     position: absolute;
-    inset: calc(100% + 0.45rem) auto auto 0.65rem;
+    inset: auto auto calc(100% + 0.45rem) 0.65rem;
     width: min(14rem, calc(100vw - 1.3rem));
     max-height: calc(100dvh - 8.5rem);
     overflow-y: auto;
@@ -589,7 +789,7 @@ body > footer a {
   }
 
   [data-profile-side="right"] .home-profile-content {
-    inset: calc(100% + 0.45rem) 0.65rem auto auto;
+    inset-inline: auto 0.65rem;
   }
 
   .home-profile-directory-list {
@@ -633,8 +833,13 @@ body > footer a {
     margin-inline: 0.65rem;
   }
 
-  #board .index-img + .index-info {
-    padding-top: 0.8rem;
+  .winter-welcome {
+    padding-inline: 1.25rem;
+    background: linear-gradient(90deg, rgb(12 28 43 / 42%), transparent 90%);
+  }
+
+  .winter-article-with-cover {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

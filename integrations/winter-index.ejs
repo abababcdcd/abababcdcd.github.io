@@ -1,0 +1,64 @@
+<%
+if (theme.index.slogan.enable) {
+  page.subtitle = theme.index.slogan.text || config.subtitle || ''
+}
+page.banner_img = theme.index.banner_img
+page.banner_img_height = theme.index.banner_img_height
+page.banner_mask_alpha = theme.index.banner_mask_alpha
+const headingTag = page.current === 1 ? 'h2' : 'h1'
+%>
+
+<section id="articles" class="winter-feed" aria-labelledby="winter-feed-title" tabindex="-1">
+  <div class="winter-feed-heading">
+    <<%= headingTag %> id="winter-feed-title">全部文章</<%= headingTag %>>
+    <span><%= site.index_posts.length %> 篇</span>
+  </div>
+  <% if (!page.posts.length) { %>
+    <p class="winter-article-card">还没有文章。</p>
+  <% } %>
+  <% page.posts.each((post) => {
+    const href = url_for(post.path)
+    const image = post.index_img || theme.post.default_index_img
+    const excerpt = strip_html(post.description || post.excerpt || (theme.index.auto_excerpt.enable && !post.encrypt && post.content) || '')
+      .trim().replace(/\s+/g, ' ').slice(0, 200)
+  %>
+    <article class="winter-article-card<%= image ? ' winter-article-with-cover' : '' %>">
+      <% if (image) { %>
+        <a href="<%= href %>" target="<%= theme.index.post_url_target %>" tabindex="-1" aria-hidden="true">
+          <img class="winter-article-cover" src="<%= url_for(image) %>" alt="">
+        </a>
+      <% } %>
+      <div class="winter-article-info">
+        <div class="winter-article-meta">
+          <% if (theme.index.post_sticky?.enable && post.sticky > 0) { %>
+            <span class="winter-article-pin">置顶</span>
+          <% } %>
+          <% if (theme.index.post_meta.date) { %>
+            <time datetime="<%= full_date(post.date, 'YYYY-MM-DDTHH:mm:ssZ') %>"><%= date(post.date, config.date_format) %></time>
+          <% } %>
+          <% if (theme.index.post_meta.category && post.categories.length) { %>
+            <div class="winter-article-categories"><%- partial('_partials/category-chains', { categories: post.categories, limit: 1 }) %></div>
+          <% } %>
+        </div>
+        <h2 class="winter-article-title">
+          <a href="<%= href %>" target="<%= theme.index.post_url_target %>"><%= post.title %></a>
+        </h2>
+        <% if (excerpt) { %>
+          <p class="winter-article-excerpt"><%= excerpt %></p>
+        <% } %>
+        <% if (theme.index.post_meta.tag && post.tags.length) { %>
+          <div class="winter-tags">
+            <% post.tags.each((tag) => { %>
+              <a href="<%= url_for(tag.path) %>">#<%= tag.name %></a>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </article>
+  <% }) %>
+  <%- partial('_partials/paginator') %>
+</section>
+
+<% if (page.current === 1) { %>
+  <%- render_article_directory(site, false, config, url_for) %>
+<% } %>

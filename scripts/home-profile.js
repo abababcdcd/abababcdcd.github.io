@@ -1,7 +1,15 @@
 "use strict";
 
+const { readFileSync } = require("node:fs");
+const path = require("node:path");
 const { escapeHTML } = require("hexo-util");
 const { validateProfileSettings } = require("../integrations/profile-settings");
+
+hexo.extend.filter.register("before_generate", function () {
+  if (this.config.theme !== "fluid") return;
+  const template = path.join(this.base_dir, "integrations", "winter-index.ejs");
+  this.theme.setView("index.ejs", readFileSync(template, "utf8"));
+});
 
 // Run after Fluid's lazy-loading filter so these small images load immediately.
 hexo.extend.filter.register("after_render:html", function (html, locals) {
@@ -12,6 +20,13 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
   const name = escapeHTML(this.config.author || this.config.title);
   const intro = escapeHTML(this.config.description || "");
   const settings = validateProfileSettings(locals.site.data["home-profile"]);
+  const title = escapeHTML(locals.theme.index.slogan.text || this.config.title);
+  const welcome = `<div class="winter-welcome">
+    <div class="winter-welcome-inner">
+      <h1>${title}</h1>
+      <a class="winter-enter" href="#articles">进入博客 <span aria-hidden="true">↓</span></a>
+    </div>
+  </div>`;
   const links = [
     ["archive", "归档", `/${this.config.archive_dir}/`],
     ["tags", "标签", `/${this.config.tag_dir}/`],
@@ -21,6 +36,13 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
     <summary>文章目录</summary>
     <div class="home-profile-directory-list">${renderGroups(locals.site, false, urlFor, true)}</div>
   </details>` : "";
+  const tags = settings.links.includes("tags")
+    ? [...locals.site.tags.data].sort((a, b) => b.length - a.length || a.name.localeCompare(b.name, "zh-CN")).slice(0, 12)
+    : [];
+  const tagLinks = tags.length ? `<div class="home-profile-tags">
+    <h3>标签</h3>
+    <div class="winter-tags">${tags.map((tag) => `<a href="${href(tag.path)}">#${escapeHTML(tag.name)}</a>`).join("")}</div>
+  </div>` : "";
   const profile = `<aside id="home-profile" class="home-profile" aria-label="个人资料">
     <details open>
       <summary class="home-profile-toggle">个人资料</summary>
@@ -34,6 +56,7 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
           ${directory}
           ${links.map(([, label, url]) => `<a href="${href(url)}">${label}</a>`).join("")}
         </nav>` : ""}
+        ${tagLinks}
       </div>
     </details>
   </aside>`;
@@ -48,6 +71,9 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
 
   const board = /<div id="board"([^>]*)>/;
   if (!board.test(html)) return html;
-  return html.replace(board, (_, attrs) => `<div id="board" class="home-with-profile" data-profile-side="${settings.side}"${attrs}>${profile}`)
+  return html.replace("<body>", '<body class="winter-home">')
+    .replace("</head>", () => `<link rel="preload" as="image" href="${href("/img/winter-cover.jpg")}">\n</head>`)
+    .replace('<div class="full-bg-img">', () => `<div class="full-bg-img">\n${welcome}`)
+    .replace(board, (_, attrs) => `<div id="board" class="home-with-profile" data-profile-side="${settings.side}"${attrs}>${profile}`)
     .replace("</body>", () => `${pet}\n</body>`);
 }, 20);
