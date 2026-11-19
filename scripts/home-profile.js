@@ -35,6 +35,9 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
     ["archive", "归档", `/${this.config.archive_dir}/`],
     ["tags", "标签", `/${this.config.tag_dir}/`],
   ].filter(([id]) => settings.links.includes(id));
+  const shortcuts = links.length ? `<div class="home-profile-shortcuts">
+    ${links.map(([, label, url]) => `<a href="${href(url)}">${label}</a>`).join("")}
+  </div>` : "";
   const showDirectory = settings.links.includes("directory");
   const postLinks = showDirectory ? locals.site.index_posts.sort("date path").map((post) =>
     `<li><a href="${href(post.path)}">${escapeHTML(post.title)}</a></li>`
@@ -46,22 +49,23 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
   const tags = settings.links.includes("tags")
     ? [...locals.site.tags.data].sort((a, b) => b.length - a.length || a.name.localeCompare(b.name, "zh-CN")).slice(0, 12)
     : [];
-  const tagLinks = tags.length ? `<div class="home-profile-tags">
-    <h3>标签</h3>
-    <div class="winter-tags">${tags.map((tag) => `<a href="${href(tag.path)}">#${escapeHTML(tag.name)}</a>`).join("")}</div>
-  </div>` : "";
+  const tagLinks = tags.length ? `<nav class="home-profile-tags winter-tags" aria-label="常用标签">
+    ${tags.map((tag) => `<a href="${href(tag.path)}">#${escapeHTML(tag.name)}</a>`).join("")}
+  </nav>` : "";
   const profile = `<aside id="home-profile" class="home-profile" aria-label="个人资料">
     <details open>
       <summary class="home-profile-toggle">个人资料</summary>
       <div class="home-profile-content">
-        <img class="home-profile-avatar" src="${href("/img/profile-avatar.jpg")}" alt="" width="78" height="78">
-        <div class="home-profile-info">
-          <h2>${name}</h2>
-          ${intro ? `<p>${intro}</p>` : ""}
+        <div class="home-profile-identity">
+          <img class="home-profile-avatar" src="${href("/img/profile-avatar.jpg")}" alt="" width="52" height="52">
+          <div class="home-profile-info">
+            <h2>${name}</h2>
+            ${intro ? `<p>${intro}</p>` : ""}
+          </div>
         </div>
-        ${directory || links.length ? `<nav class="home-profile-links" aria-label="博客导航">
+        ${directory || shortcuts ? `<nav class="home-profile-links" aria-label="博客导航">
+          ${shortcuts}
           ${directory}
-          ${links.map(([, label, url]) => `<a href="${href(url)}">${label}</a>`).join("")}
         </nav>` : ""}
         ${tagLinks}
       </div>

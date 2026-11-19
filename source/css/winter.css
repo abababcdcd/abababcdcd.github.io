@@ -523,119 +523,138 @@ body:has(#board-ctn) #subtitle {
 }
 
 .home-profile-tags {
-  margin-top: 0.65rem;
-  padding-top: 0.65rem;
+  margin-block-start: 0.65rem;
+  padding-block-start: 0.65rem;
   border-top: 1px solid var(--line-color);
-  text-align: start;
 }
 
-.home-profile-tags h3 {
-  margin: 0 0 0.4rem;
-  font-size: 0.83rem;
+.home-profile-tags a {
+  background: color-mix(in srgb, var(--board-bg-color) 42%, transparent);
+  color: var(--text-color);
+}
+
+.home-profile-toggle,
+.home-profile-directory > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  list-style: none;
+  cursor: pointer;
+  font-size: 0.85rem;
   font-weight: 650;
 }
 
 .home-profile-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.65rem;
-  min-height: 2.5rem;
+  min-height: 2.4rem;
   padding: 0.45rem 0.85rem;
   border-radius: inherit;
-  list-style: none;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
 }
 
-.home-profile-toggle::-webkit-details-marker {
+.home-profile-toggle::-webkit-details-marker,
+.home-profile-directory > summary::-webkit-details-marker {
   display: none;
 }
 
-.home-profile-toggle::after {
+.home-profile-toggle::after,
+.home-profile-directory > summary::after {
+  flex: 0 0 auto;
   width: 0.45rem;
   height: 0.45rem;
   margin-inline-end: 0.15rem;
-  border-inline-end: 2px solid currentColor;
-  border-block-end: 2px solid currentColor;
+  border-inline-end: 1.5px solid currentColor;
+  border-block-end: 1.5px solid currentColor;
   transform: rotate(45deg);
   content: "";
 }
 
-.home-profile details[open] > .home-profile-toggle::after {
+.home-profile > details[open] > .home-profile-toggle::after,
+.home-profile-directory[open] > summary::after {
   transform: rotate(225deg);
 }
 
-.home-profile-toggle:hover,
-.home-profile-toggle:focus-visible {
-  color: var(--post-link-color);
+.home-profile :is(a, summary):is(:hover, :focus-visible) {
+  color: var(--link-hover-color);
 }
 
-.home-profile-toggle:focus-visible {
-  outline: 2px solid var(--post-link-color);
-  outline-offset: -3px;
+.home-profile :is(a, summary):focus-visible {
+  outline: 2px solid var(--link-hover-color);
+  outline-offset: -2px;
 }
 
 .home-profile-content {
-  padding: 0.9rem 0.85rem 0.8rem;
+  padding: 0.8rem 0.85rem;
   border-top: 1px solid var(--line-color);
-  text-align: center;
+}
+
+.home-profile-identity {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.68rem;
 }
 
 .home-profile-avatar {
   display: block;
-  width: 78px;
-  height: 78px;
-  margin: 0 auto 0.65rem;
-  border: 2px solid var(--board-bg-color);
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border: 1px solid var(--winter-frame);
   border-radius: 50%;
   object-fit: cover;
 }
 
 .home-profile-info h2 {
-  font-size: 1.15rem;
-  font-weight: 650;
   margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.25;
   overflow-wrap: anywhere;
 }
 
 .home-profile-info p {
-  margin: 0.3rem 0 0;
+  margin: 0.16rem 0 0;
   color: var(--sec-text-color);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .home-profile-links {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.7rem;
-  margin-top: 0.75rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid var(--line-color);
-  font-size: 0.84rem;
+  display: grid;
+  gap: 0.65rem;
+  margin-block-start: 0.75rem;
 }
 
-.home-profile-links > a {
-  display: inline-flex;
-  padding: 0.25rem 0.05rem;
-  color: var(--post-link-color);
+.home-profile-shortcuts {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 0.45rem;
+}
+
+.home-profile-shortcuts a {
+  display: grid;
+  place-items: center;
+  min-height: 2rem;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid var(--line-color);
+  border-radius: 0.42rem;
+  background: color-mix(in srgb, var(--board-bg-color) 42%, transparent);
+  color: var(--text-color);
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 .home-profile-directory {
-  flex: 0 0 100%;
   min-width: 0;
-  border: 1px solid var(--line-color);
-  border-radius: 0.5rem;
-  background: var(--board-bg-color);
-  text-align: start;
+  padding-block-start: 0.45rem;
+  border-top: 1px solid var(--line-color);
 }
 
 .home-profile-directory > summary {
-  padding: 0.45rem 0.65rem;
-  font-weight: 650;
-  cursor: pointer;
+  padding: 0.3rem 0.35rem 0.42rem;
+  border-radius: 0.35rem;
 }
 
 .home-profile-directory-list {
@@ -643,30 +662,35 @@ body:has(#board-ctn) #subtitle {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  border-top: 1px solid var(--line-color);
-  padding: 0.35rem 0.6rem 0.45rem;
 }
 
 .home-profile-directory-list ul {
-  margin: 0.15rem 0 0;
-  padding-inline-start: 1.1rem;
-  overflow-wrap: anywhere;
+  display: grid;
+  gap: 0.12rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .home-profile-directory-list a {
   display: block;
-  padding-block: 0.22rem;
-  color: var(--post-link-color);
+  padding: 0.34rem 0.38rem;
+  border-radius: 0.3rem;
+  color: var(--text-color);
+  font-size: 0.83rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
-.home-profile-directory-list a:is(:hover, :focus-visible) {
-  color: var(--link-hover-color);
-  text-decoration: underline;
+.home-profile :is(.home-profile-directory-list, .home-profile-shortcuts) a:is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--link-hover-color) 12%, transparent);
 }
 
 .home-profile-directory-list p {
   margin: 0;
+  padding: 0.34rem 0.38rem;
   color: var(--sec-text-color);
+  font-size: 0.83rem;
 }
 
 .home-pet {
@@ -887,7 +911,7 @@ body:has(#board-ctn) #subtitle {
     overflow-y: auto;
     border: 1px solid var(--line-color);
     border-radius: 0.6rem;
-    background: var(--winter-panel);
+    background: color-mix(in srgb, var(--board-bg-color) 94%, transparent);
     box-shadow: 0 8px 24px rgb(24 43 65 / 18%);
   }
 
