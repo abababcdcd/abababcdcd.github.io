@@ -24,7 +24,7 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
   const welcome = `<div class="winter-welcome">
     <div class="winter-welcome-inner">
       <h1>${title}</h1>
-      <a class="winter-enter" href="#articles">进入博客 <span aria-hidden="true">↓</span></a>
+      <a class="winter-enter" href="#articles">进入博客 <span aria-hidden="true">→</span></a>
     </div>
   </div>`;
   const links = [
@@ -75,5 +75,6 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
     .replace("</head>", () => `<link rel="preload" as="image" href="${href("/img/winter-cover.jpg")}">\n</head>`)
     .replace('<div class="full-bg-img">', () => `<div class="full-bg-img">\n${welcome}`)
     .replace(board, (_, attrs) => `<div id="board" class="home-with-profile" data-profile-side="${settings.side}"${attrs}>${profile}`)
+    .replace('id="scroll-top-button" aria-label="TOP" href="#"', 'id="scroll-top-button" aria-label="TOP" href="#articles"')
     .replace("</body>", () => `${pet}\n</body>`);
 }, 20);

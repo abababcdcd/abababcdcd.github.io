@@ -81,6 +81,29 @@ body > footer a {
   height: 100svh !important;
 }
 
+/* A fragment inside the blog opens the feed, including direct directory links. */
+html:has(.winter-home):not(:has(.winter-home main :target)) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.winter-home:not(:has(main :target)) > main {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.winter-home:not(:has(main :target)) > footer,
+.winter-home:not(:has(main :target)) :is(#navbar, #mobile-grid-menu),
+.winter-home:has(main :target) #banner {
+  display: none;
+}
+
+.winter-home:has(main :target) .header-inner {
+  height: 4.25rem !important;
+}
+
 .winter-home > main {
   min-height: calc(100svh - 4.5rem);
 }
