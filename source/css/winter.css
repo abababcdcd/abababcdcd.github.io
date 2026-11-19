@@ -29,6 +29,7 @@ body::before {
 
 #board-ctn > #board {
   scroll-margin-top: 5rem;
+  padding-block: clamp(1.65rem, 4.2vw, 2.65rem);
 }
 
 body > footer,
@@ -348,7 +349,7 @@ body:has(#board-ctn) #subtitle {
 .winter-article-card {
   position: relative;
   margin: 0 0 0.9rem;
-  padding: clamp(1rem, 3vw, 1.55rem);
+  padding: clamp(1rem, 2.5vw, 1.35rem);
   border-inline-start: 3px solid #c99d62;
 }
 
@@ -384,6 +385,7 @@ body:has(#board-ctn) #subtitle {
   gap: 0.25rem 0.65rem;
   color: var(--sec-text-color);
   font-size: 0.8rem;
+  line-height: 1.45;
 }
 
 .winter-article-meta time {
@@ -671,16 +673,35 @@ body:has(#board-ctn) #subtitle {
 
 #board-ctn .post-content {
   max-width: 52rem;
-  padding-inline: clamp(1rem, 4.2vw, 3.3rem);
+  padding-inline: clamp(1.05rem, 4vw, 3.15rem);
 }
 
 .post-content .markdown-body {
-  font-size: 1.025rem;
-  line-height: 1.75;
+  font-size: clamp(1rem, 1.55vw, 1.0625rem);
+  line-height: 1.85;
 }
 
-.post-content .markdown-body :is(h1, h2, h3, h4, h5, h6)[id] {
+.post-content .markdown-body :is(h2, h3, h4) {
+  line-height: 1.4;
+  margin-block: 1.65em 0.6em;
+}
+
+.post-content .markdown-body li + li {
+  margin-block-start: 0.45em;
+}
+
+.post-content .markdown-body :is(pre, figure.highlight) {
+  max-width: 100%;
+  border-radius: 0.5rem;
+}
+
+.post-content .markdown-body :is(h1, h2, h3, h4, h5, h6, p, li)[id] {
   scroll-margin-top: 5rem;
+}
+
+.post-content .markdown-body [data-reading-anchor]:target {
+  outline: 2px solid var(--link-hover-color);
+  outline-offset: 0.2rem;
 }
 
 .reading-toc {
@@ -718,6 +739,8 @@ body:has(#board-ctn) #subtitle {
 
 .reading-toc-list ol ol {
   padding-inline-start: 0.65rem;
+  margin-inline-start: 0.25rem;
+  border-inline-start: 1px solid var(--line-color);
 }
 
 .reading-toc-link {
@@ -745,6 +768,35 @@ body:has(#board-ctn) #subtitle {
 .reading-toc-link:is(:hover, :focus-visible) {
   color: var(--link-hover-color);
   text-decoration: underline;
+}
+
+@media (min-width: 992px) {
+  .winter-reading-layout:not(:has(> .side-col:first-child > *)) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(12.5rem, 15.5rem);
+    gap: clamp(1rem, 2.5vw, 1.7rem);
+    width: min(calc(100% - 2rem), 73rem);
+    margin-inline: auto !important;
+  }
+
+  .winter-reading-layout > .side-col:first-child:not(:has(> *)) {
+    display: none !important;
+  }
+
+  .winter-reading-layout:not(:has(> .side-col:first-child > *)) > :is(.col-lg-8, .side-col) {
+    max-width: none;
+    min-width: 0;
+    padding-inline: 0;
+  }
+
+  .winter-reading-layout #board-ctn {
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  .winter-reading-layout .reading-toc {
+    margin-block-start: -2rem;
+  }
 }
 
 @media (max-width: 991.98px) {
