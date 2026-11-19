@@ -74,7 +74,8 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
 
   const pet = `<div class="home-pet">
     <span class="home-pet-message" role="status"></span>
-    <button class="home-pet-button" type="button" aria-label="跟小猫打招呼">
+    <button class="home-pet-button" type="button" aria-label="跟小猫打招呼"
+      aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight" title="拖动小猫，或选中后用方向键移动">
       <img src="${href("/img/blog-cat-v3.png")}" data-blink-src="${href("/img/blog-cat-blink.png")}"
         data-wink-src="${href("/img/blog-cat-wink.png")}" data-alert-src="${href("/img/blog-cat-alert.png")}"
         alt="" width="96" height="96">

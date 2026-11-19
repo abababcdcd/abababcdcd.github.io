@@ -696,7 +696,7 @@ body:has(#board-ctn) #subtitle {
 .home-pet {
   position: fixed;
   inset: auto 0.95rem max(3.75rem, env(safe-area-inset-bottom)) auto;
-  z-index: 1020;
+  z-index: 1031;
 }
 
 .home-pet-button {
@@ -706,7 +706,13 @@ body:has(#board-ctn) #subtitle {
   border: none;
   border-radius: 50%;
   background: transparent;
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.home-pet-button.is-dragging {
+  cursor: grabbing;
 }
 
 .home-pet-button img {
@@ -715,6 +721,7 @@ body:has(#board-ctn) #subtitle {
   height: auto;
   transform-origin: 50% 88%;
   filter: drop-shadow(0 4px 5px rgb(26 38 51 / 28%));
+  pointer-events: none;
 }
 
 .home-pet-message {
