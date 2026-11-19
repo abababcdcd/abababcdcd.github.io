@@ -593,22 +593,6 @@ body:has(#board-ctn) #subtitle {
   padding: 0.35rem 0.6rem 0.45rem;
 }
 
-.home-profile-directory-list .article-directory-groups {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.35rem;
-}
-
-.home-profile-directory-list summary {
-  cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--sec-text-color);
-}
-
-.home-profile-directory-list .article-directory-count {
-  font-size: 0.72rem;
-}
-
 .home-profile-directory-list ul {
   margin: 0.15rem 0 0;
   padding-inline-start: 1.1rem;

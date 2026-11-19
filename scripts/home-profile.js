@@ -35,10 +35,13 @@ hexo.extend.filter.register("after_render:html", function (html, locals) {
     ["archive", "归档", `/${this.config.archive_dir}/`],
     ["tags", "标签", `/${this.config.tag_dir}/`],
   ].filter(([id]) => settings.links.includes(id));
-  const renderGroups = this.extend.helper.get("render_directory_groups");
-  const directory = settings.links.includes("directory") ? `<details class="home-profile-directory" open>
+  const showDirectory = settings.links.includes("directory");
+  const postLinks = showDirectory ? locals.site.index_posts.sort("date path").map((post) =>
+    `<li><a href="${href(post.path)}">${escapeHTML(post.title)}</a></li>`
+  ).join("") : "";
+  const directory = showDirectory ? `<details class="home-profile-directory" open>
     <summary>文章目录</summary>
-    <div class="home-profile-directory-list">${renderGroups(locals.site, false, urlFor, true)}</div>
+    <div class="home-profile-directory-list">${postLinks ? `<ul>${postLinks}</ul>` : "<p>还没有文章。</p>"}</div>
   </details>` : "";
   const tags = settings.links.includes("tags")
     ? [...locals.site.tags.data].sort((a, b) => b.length - a.length || a.name.localeCompare(b.name, "zh-CN")).slice(0, 12)

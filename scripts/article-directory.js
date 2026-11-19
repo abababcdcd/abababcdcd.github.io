@@ -42,12 +42,12 @@ function directoryGroups(site, byTag) {
   return [...groups.values()].sort((a, b) => nameOrder.compare(a.name, b.name));
 }
 
-function renderDirectoryGroups(site, byTag, urlFor, openGroups = false) {
+function renderDirectoryGroups(site, byTag, urlFor) {
   const groups = directoryGroups(site, byTag);
   if (!groups.length) return `<p>${byTag ? "还没有带标签的文章。" : "还没有文章。"}</p>`;
 
   const items = groups.map(({ name, posts }) => {
-    const open = openGroups || (groups.length === 1 && posts.length <= 6) ? " open" : "";
+    const open = groups.length === 1 && posts.length <= 6 ? " open" : "";
     const entries = posts.map((post) => {
       const href = escapeHTML(urlFor(post.path));
       return `<li><a href="${href}">${escapeHTML(post.title)}</a></li>`;
@@ -59,8 +59,6 @@ function renderDirectoryGroups(site, byTag, urlFor, openGroups = false) {
   }).join("");
   return `<div class="article-directory-groups">${items}</div>`;
 }
-
-hexo.extend.helper.register("render_directory_groups", renderDirectoryGroups);
 
 function renderDirectory(site, byTag, config, urlFor) {
   const title = byTag ? "标签目录" : "文章目录";
