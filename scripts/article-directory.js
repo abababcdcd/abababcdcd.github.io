@@ -53,7 +53,7 @@ function renderDirectoryGroups(site, byTag, urlFor, openGroups = false) {
       return `<li><a href="${href}">${escapeHTML(post.title)}</a></li>`;
     }).join("");
     return `<details${open}>
-      <summary>${escapeHTML(name)}<span class="article-directory-count">${posts.length} 篇</span></summary>
+      <summary><span class="article-directory-name">${escapeHTML(name)}</span><span class="article-directory-count">${posts.length} 篇</span></summary>
       <ul>${entries}</ul>
     </details>`;
   }).join("");
@@ -77,12 +77,19 @@ function renderDirectory(site, byTag, config, urlFor) {
 
 hexo.extend.filter.register("after_render:html", function (html, locals) {
   if (this.config.theme !== "fluid" || !locals?.page) return html;
-  const home = locals.page.__index && locals.page.current === 1;
+  const index = locals.page.__index;
+  const home = index && locals.page.current === 1;
   const tagIndex = locals.path === `${this.config.tag_dir.replace(/\/$/, "")}/index.html`;
+  if (index) {
+    // Fluid adds a focusable excerpt link even when the excerpt is empty.
+    html = html.replace(/<a class="index-excerpt\b[^"]*"[^>]*>\s*<div>\s*<\/div>\s*<\/a>/g, "");
+  }
   if (!home && !tagIndex) return html;
 
   const urlFor = this.extend.helper.get("url_for").bind(this);
   const directory = renderDirectory(locals.site, tagIndex, this.config, urlFor);
   // Fluid uses this content column on both the home and tag index templates.
-  return html.replace('<div class="col-12 col-md-10 m-auto">', (column) => `${column}\n${directory}`);
+  const articleHeading = home && locals.page.posts?.length
+    ? '<h2 class="home-articles-title">文章列表</h2>' : "";
+  return html.replace('<div class="col-12 col-md-10 m-auto">', (column) => `${column}\n${directory}\n${articleHeading}`);
 });

@@ -33,8 +33,8 @@ hexo.extend.helper.register("render_reading_toc", function () {
   if (!headings.length) return "";
 
   return `<details class="reading-toc" open>
-    <summary>目录</summary>
-    <nav class="reading-toc-list" aria-label="文章目录" tabindex="0">${renderList(headings)}</nav>
+    <summary>章节目录</summary>
+    <nav class="reading-toc-list" aria-label="文章章节" tabindex="0">${renderList(headings)}</nav>
   </details>
   <script src="${this.url_for("/js/reading-toc.js")}" defer></script>`;
 });
